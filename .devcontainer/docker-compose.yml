@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  betsweb-dev:
+    container_name: betsweb-angular-dev
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    volumes:
+      # Código fuente - persiste en tu máquina
+      - ..:/workspace:cached
+      # node_modules - volumen persistente para velocidad
+      - betsweb_node_modules:/workspace/node_modules
+      # Cache npm - persiste entre sesiones
+      - betsweb_npm_cache:/root/.npm
+      # Cache Angular - persiste builds
+      - betsweb_angular_cache:/workspace/.angular
+      # Configuraciones globales
+      - betsweb_global_config:/root/.config
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=development
+      - npm_config_registry=https://registry.npmjs.org/
+      - npm_config_cache=/root/.npm
+    working_dir: /workspace
+    user: root
+    command: sleep infinity
+
+volumes:
+  betsweb_node_modules:
+  betsweb_npm_cache:
+  betsweb_angular_cache:
+  betsweb_global_config:
