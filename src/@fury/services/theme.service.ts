@@ -20,7 +20,7 @@ export interface ThemeConfig {
 })
 export class ThemeService {
 
-  private _themeSubject = new BehaviorSubject<[Theme, Theme]>([null, 'fury-default']);
+  private _themeSubject = new BehaviorSubject<[Theme, Theme]>([null, 'fury-dark']);
   theme$ = this._themeSubject.asObservable();
   activeTheme$ = this.theme$.pipe(
     map(theme => theme[1])
@@ -36,7 +36,7 @@ export class ThemeService {
   config$ = this._configSubject.asObservable();
 
   constructor(private sidenavService: SidenavService) {
-    this.setTheme('fury-default');
+    this.setTheme('fury-dark');
   }
 
   setTheme(theme: Theme) {

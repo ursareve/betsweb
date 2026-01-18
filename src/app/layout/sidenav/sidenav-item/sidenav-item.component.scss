@@ -80,6 +80,8 @@
     padding: math.div($spacing, 12) math.div($spacing, 3);
     font-size: 12px;
     border-radius: 12px;
+    background-color: #8CE332;  // Color verde lima por defecto
+    color: rgba(black, 0.87);
 
     & + .expand-indicator {
       margin-left: 8px;

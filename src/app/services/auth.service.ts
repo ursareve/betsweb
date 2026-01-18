@@ -31,6 +31,7 @@ export class AuthService {
   }
 
   async signOut() {
+    localStorage.removeItem('isLoggedIn');
     return await signOut(this.auth);
   }
 

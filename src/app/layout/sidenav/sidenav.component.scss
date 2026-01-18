@@ -1,6 +1,11 @@
 @use 'sass:math';
 @import "var";
 
+@font-face {
+  font-family: 'Offenbacher';
+  src: url('/assets/fonts/OfenbacherSchwabCAT.ttf') format('truetype');
+}
+
 :host {
   display: flex;
   flex-direction: column;
@@ -26,20 +31,22 @@
   .sidenav-toolbar-icon {
     vertical-align: text-top;
 
-    svg {
-      width: 26px;
+    img {
+      height: 45px;
+      width: auto;
     }
   }
 
   .sidenav-toolbar-logo {
     cursor: pointer;
     outline: none;
-    margin-left: $sidenav-item-padding-left;
+    margin-left: -10px;
     margin-bottom: -5px;
 
-    svg {
-      height: 30px;
-      width: 60px;
+    .logo-text {
+      font-family: 'Offenbacher', sans-serif;
+      font-size: 36px;
+      line-height: 36px;
     }
   }
 }

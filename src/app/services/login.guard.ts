@@ -11,11 +11,13 @@ export class LoginGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(): Observable<boolean> {
-    // Permitir acceso inmediato, verificar después
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      setTimeout(() => this.router.navigate(['/dashboard']), 0);
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    
+    if (isLoggedIn) {
+      this.router.navigate(['/dashboard']);
+      return of(false);
     }
-    return of(true);
+    this.router.navigate(['/login']);
+    return of(false);
   }
 }

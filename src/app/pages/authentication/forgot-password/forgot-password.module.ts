@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../@fury/shared/material-components.module';
 import { ForgotPasswordRoutingModule } from './forgot-password-routing.module';
 import { ForgotPasswordComponent } from './forgot-password.component';
+import { SuccessDialogComponent } from '../../../shared/dialogs/success-dialog/success-dialog.component';
 
 @NgModule({
   imports: [
@@ -12,7 +13,7 @@ import { ForgotPasswordComponent } from './forgot-password.component';
     MaterialModule,
     ReactiveFormsModule
   ],
-  declarations: [ForgotPasswordComponent]
+  declarations: [ForgotPasswordComponent, SuccessDialogComponent]
 })
 export class ForgotPasswordModule {
 }

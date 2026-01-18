@@ -5,18 +5,145 @@
 // $theme-primary: mat-palette($mat-teal);
 // $theme-accent:  mat-palette($mat-light-blue, 500, 200, 700);
 
-// Define tus colores personalizados
+// 🎨 Colores personalizados del proyecto
+$custom-primary: (
+  50: #e3f2fd,
+  100: #bbdefb,
+  200: #90caf9,
+  300: #64b5f6,
+  400: #42a5f5,
+  500: #135bec,  // Color principal personalizado
+  600: #1e88e5,
+  700: #135bec,  // Tono principal
+  800: #1565c0,
+  900: #0d47a1,
+  A100: #82b1ff,
+  A200: #448aff,
+  A400: #2979ff,
+  A700: #2962ff,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+$custom-primary-gold: (
+  50: #fef9e7,
+  100: #fdf0c4,
+  200: #fbe69d,
+  300: #f9dc76,
+  400: #f8d558,
+  500: #E3BC32,  // Color dorado principal
+  600: #d4ab2d,
+  700: #c39826,
+  800: #b3861f,
+  900: #9b6513,
+  A100: #fff9e6,
+  A200: #fff0b3,
+  A400: #ffe780,
+  A700: #ffe066,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: rgba(black, 0.87),
+    600: rgba(black, 0.87),
+    700: rgba(black, 0.87),
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: rgba(black, 0.87),
+    A400: rgba(black, 0.87),
+    A700: rgba(black, 0.87),
+  )
+);
+
+$custom-accent: (
+  50: #e8f5f0,
+  100: #c6e6d9,
+  200: #a0d6c0,
+  300: #7ac5a7,
+  400: #5eb994,
+  500: #10b981,  // Color acento personalizado (verde)
+  600: #0ea272,
+  700: #0c8f63,
+  800: #0a7d54,
+  900: #065d3d,
+  A100: #69f0c2,
+  A200: #36ecb0,
+  A400: #03e89e,
+  A700: #00d48e,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: rgba(black, 0.87),
+    A400: rgba(black, 0.87),
+    A700: rgba(black, 0.87),
+  )
+);
+
+$custom-accent-gold: (
+  50: #f7fce8,
+  100: #ecf8c6,
+  200: #dff3a0,
+  300: #d2ee7a,
+  400: #c8ea5e,
+  500: #8CE332,  // Color verde lima principal
+  600: #7dd12d,
+  700: #6bba26,
+  800: #5aa41f,
+  900: #407e13,
+  A100: #e6ffb3,
+  A200: #d4ff80,
+  A400: #c2ff4d,
+  A700: #b8ff33,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: rgba(black, 0.87),
+    600: rgba(black, 0.87),
+    700: rgba(black, 0.87),
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: rgba(black, 0.87),
+    A400: rgba(black, 0.87),
+    A700: rgba(black, 0.87),
+  )
+);
+
 $theme-primary-hue: 700;
 $theme-accent-hue: 500;
 $theme-warn-hue: 500;
 
-// Cambia estas paletas por las que quieras:
-// Opciones: $red, $pink, $purple, $deep-purple, $indigo, $blue, $light-blue, 
-//           $cyan, $teal, $green, $light-green, $lime, $yellow, $amber, 
-//           $orange, $deep-orange, $brown, $grey, $blue-grey
-
-$theme-primary: mat.define-palette(mat.$blue-palette, $theme-primary-hue);  // Color principal (rojo)
-$theme-accent: mat.define-palette(mat.$teal-palette, $theme-accent-hue);    // Color acento (verde/teal)
+$theme-primary: mat.define-palette($custom-primary-gold, $theme-primary-hue);  // Color principal dorado #E3BC32
+$theme-accent: mat.define-palette($custom-accent-gold, $theme-accent-hue);    // Color acento verde lima #8CE332
 $theme-warn: mat.define-palette(mat.$red-palette, $theme-warn-hue);         // Color advertencia (rojo)
 
 $theme: mat.define-light-theme((
@@ -67,7 +194,7 @@ $dark-theme: mat.define-dark-theme((
 
   @import "../@fury/styles/themes/dark";
 
-  background: $theme-background;
+  background: #101622 !important;  // Background oscuro personalizado
   color: $theme-text;
 
   @import "./pages/apps/inbox/inbox.component.theme";
@@ -75,6 +202,21 @@ $dark-theme: mat.define-dark-theme((
   @import "./pages/forms/form-wizard/form-wizard.component.theme";
   @import "./pages/coming-soon/coming-soon.component.theme";
   @import "./layout/config-panel/config-panel.component.theme";
+  
+  // Sobrescribir colores de fondo adicionales
+  .mat-drawer-container,
+  .mat-sidenav-container {
+    background-color: #101622 !important;
+  }
+  
+  .mat-toolbar,
+  .mat-app-bar {
+    background-color: #1a2332 !important;
+  }
+  
+  .mat-card {
+    background-color: #1a2332 !important;
+  }
 }
 
 .fury-flat {

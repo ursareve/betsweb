@@ -16,9 +16,12 @@ export class LoginComponent implements OnInit {
 
   form: UntypedFormGroup;
   loading = false;
+  rememberMe = false;
 
   inputType = 'password';
   visible = false;
+
+  private readonly REMEMBER_EMAIL_KEY = 'rememberEmail';
 
   constructor(private router: Router,
               private fb: UntypedFormBuilder,
@@ -30,10 +33,24 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Inicializar el formulario primero
+    const savedEmail = localStorage.getItem(this.REMEMBER_EMAIL_KEY);
+    
     this.form = this.fb.group({
-      email: ['', Validators.required],
+      email: [savedEmail || '', Validators.required],
       password: ['', Validators.required]
     });
+
+    // Si hay email guardado, marcar el toggle
+    if (savedEmail) {
+      this.rememberMe = true;
+    }
+    
+    // Verificar si ya está logueado
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   async send() {
@@ -41,7 +58,18 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       try {
         const { email, password } = this.form.value;
+        
         await this.authService.signIn(email, password);
+        
+        // Guardar o eliminar email e isLoggedIn según el toggle
+        if (this.rememberMe) {
+          localStorage.setItem(this.REMEMBER_EMAIL_KEY, email);
+          localStorage.setItem('isLoggedIn', 'true');
+        } else {
+          localStorage.removeItem(this.REMEMBER_EMAIL_KEY);
+          localStorage.removeItem('isLoggedIn');
+        }
+        
         await this.router.navigate(['/dashboard']);
         this.snackbar.open('Login successful!', 'OK', { duration: 3000 });
         

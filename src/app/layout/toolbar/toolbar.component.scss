@@ -1,6 +1,11 @@
 @use 'sass:math';
 @import "var";
 
+@font-face {
+  font-family: 'Offenbacher';
+  src: url('/assets/fonts/OfenbacherSchwabCAT.ttf') format('truetype');
+}
+
 :host {
   top: 0;
   z-index: $toolbar-z-index;
@@ -25,8 +30,10 @@
     margin-left: $spacing;
     margin-right: $spacing;
 
-    svg {
-      height: 35px;
+    .logo-text {
+      font-family: 'Offenbacher', sans-serif;
+      font-size: 28px;
+      line-height: 35px;
     }
   }
 

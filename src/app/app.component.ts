@@ -3,11 +3,12 @@ import { Component, Inject, Renderer2 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { SidenavService } from './layout/sidenav/sidenav.service';
 import { ThemeService } from '../@fury/services/theme.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Platform } from '@angular/cdk/platform';
 import { SplashScreenService } from '../@fury/services/splash-screen.service';
 import { NotificationService } from './services/notification.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'betsweb-root',
@@ -23,7 +24,9 @@ export class AppComponent {
               private platform: Platform,
               private route: ActivatedRoute,
               private splashScreenService: SplashScreenService,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService,
+              private router: Router,
+              private authService: AuthService) {
     this.route.queryParamMap.pipe(
       filter(queryParamMap => queryParamMap.has('style'))
     ).subscribe(queryParamMap => this.themeService.setStyle(queryParamMap.get('style')));
@@ -60,7 +63,6 @@ export class AppComponent {
         routeOrFunction: '/tables/all-in-one-table',
         icon: 'assignment',
         badge: '22',
-        badgeColor: '#2196F3',
         position: 15,
       },
       {
@@ -80,8 +82,7 @@ export class AppComponent {
         routeOrFunction: '/apps/chat',
         icon: 'chat',
         position: 30,
-        badge: '14',
-        badgeColor: '#009688'
+        badge: '14'
       },
       {
         name: 'USER INTERFACE',
@@ -176,8 +177,7 @@ export class AppComponent {
             position: 15
           },
         ],
-        badge: '4',
-        badgeColor: '#4CAF50'
+        badge: '4'
       },
       {
         name: 'Coming Soon',
@@ -232,6 +232,14 @@ export class AppComponent {
   }
 
   ngOnInit() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    
+    if (isLoggedIn) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+    
     this.notificationService.listenForegroundMessages();
   }
 }

@@ -16,8 +16,9 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean> {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    
+    if (isLoggedIn) {
       return of(true);
     } else {
       this.snackBar.open('Debes iniciar sesión para acceder', 'OK', { duration: 3000 });
