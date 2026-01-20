@@ -85,6 +85,12 @@ export class AppComponent {
         badge: '14'
       },
       {
+        name: 'Surebets',
+        routeOrFunction: '/bets/surebets',
+        icon: 'trending_up',
+        position: 31
+      },
+      {
         name: 'USER INTERFACE',
         type: 'subheading',
         position: 35
@@ -235,7 +241,7 @@ export class AppComponent {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/bets/surebets']);
     } else {
       this.router.navigate(['/login']);
     }

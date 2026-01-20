@@ -1,0 +1,51 @@
+<div class="surebet">
+  <div class="header elevation"></div>
+  
+  <button mat-fab color="primary" class="flash-test-button" (click)="triggerFlash()">
+    <mat-icon>flash_on</mat-icon>
+  </button>
+  
+  <div class="events-container">
+    <mat-list class="events-list">
+      <mat-list-item *ngFor="let event of events" class="event-item">
+        <span class="sport-tag">
+          <mat-icon>sports_soccer</mat-icon>
+        </span>
+        <span class="profit">+{{ event.profit }}%</span>
+        <div class="event-content">
+          <div class="event-header">
+            <div class="event-info">
+              <div class="event-title">
+                <span class="match-name">{{ event.homeTeam }} vs {{ event.awayTeam }}</span>
+                <span class="league">{{ event.league }}</span>
+              </div>
+              <span class="date-time">
+                <mat-icon>schedule</mat-icon>
+                {{ event.date }} {{ event.time }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="bookmakers-container">
+            <div class="bookmakers-wrapper">
+              <div class="bookmaker" *ngFor="let bookmaker of event.bookmakers; let i = index" [class.reverse]="i % 2 !== 0">
+                <div class="logo-wrapper">
+                  <img [src]="bookmaker.logo" class="bookmaker-logo" alt="{{ bookmaker.name }}">
+                </div>
+                <div class="bookmaker-info">
+                  <span class="bookmaker-name">{{ bookmaker.name }}</span>
+                  <span class="bet-type">{{ bookmaker.betType }}</span>
+                </div>
+                <span class="bookmaker-odd">{{ bookmaker.odd }}</span>
+              </div>
+            </div>
+            <button mat-raised-button class="calculate-button">
+              <mat-icon>flash_on</mat-icon>
+              Calcular
+            </button>
+          </div>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

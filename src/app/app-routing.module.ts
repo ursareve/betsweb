@@ -28,7 +28,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: 'bets/surebets',
         pathMatch: 'full'
       },
       {
@@ -46,6 +46,10 @@ const routes: Routes = [
       {
         path: 'apps/chat',
         loadChildren: () => import('./pages/apps/chat/chat.module').then(m => m.ChatModule),
+      },
+      {
+        path: 'bets/surebets',
+        loadChildren: () => import('./pages/bets/surebet.module').then(m => m.SurebetModule),
       },
       {
         path: 'components',
