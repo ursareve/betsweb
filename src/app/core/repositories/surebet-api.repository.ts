@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class SurebetApiRepository extends SurebetRepository {
-  private apiUrl = `${environment.apiUrl}/arbs`;
+  private apiUrl = `${environment.apiUrl}/current`;
 
   constructor(private http: HttpClient) {
     super();
