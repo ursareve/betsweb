@@ -5,47 +5,96 @@
     <mat-icon>flash_on</mat-icon>
   </button>
   
-  <div class="events-container">
-    <mat-list class="events-list">
-      <mat-list-item *ngFor="let event of events" class="event-item">
-        <span class="sport-tag">
-          <mat-icon>sports_soccer</mat-icon>
+  <!-- <div class="events-container">
+    <div class="events-list-inline">
+      <div *ngFor="let event of events" class="event-item-inline">
+        <span class="sport-tag-inline">
+          <mat-icon>{{ event.icon }}</mat-icon>
         </span>
-        <span class="profit">+{{ event.profit }}%</span>
-        <div class="event-content">
-          <div class="event-header">
-            <div class="event-info">
-              <div class="event-title">
-                <span class="match-name">{{ event.homeTeam }} vs {{ event.awayTeam }}</span>
-                <span class="league">{{ event.league }}</span>
-              </div>
-              <span class="date-time">
-                <mat-icon>schedule</mat-icon>
-                {{ event.date }} {{ event.time }}
-              </span>
+        <div class="event-item-inline-content">
+          <div class="match-league-inline">
+            <span class="match-info-inline">{{ event.homeTeam }} vs {{ event.awayTeam }}</span>
+            <span class="league-inline">{{ event.league }}</span>
+          </div>
+          <div class="date-time-inline">
+            <mat-icon>schedule</mat-icon>
+            <div class="date-time-text">
+              <span>{{ event.date }}</span>
+              <span>{{ event.time }}</span>
             </div>
           </div>
-          
-          <div class="bookmakers-container">
-            <div class="bookmakers-wrapper">
-              <div class="bookmaker" *ngFor="let bookmaker of event.bookmakers; let i = index" [class.reverse]="i % 2 !== 0">
-                <div class="logo-wrapper">
-                  <img [src]="bookmaker.logo" class="bookmaker-logo" alt="{{ bookmaker.name }}">
-                </div>
-                <div class="bookmaker-info">
-                  <span class="bookmaker-name">{{ bookmaker.name }}</span>
-                  <span class="bet-type">{{ bookmaker.betType }}</span>
-                </div>
-                <span class="bookmaker-odd">{{ bookmaker.odd }}</span>
+          <div class="bookmakers-inline">
+            <div class="bookmaker-inline" *ngFor="let bookmaker of event.bookmakers; let i = index" [class.reverse]="i % 2 !== 0">
+              <div class="logo-wrapper-inline">
+                <img [src]="bookmaker.logo" class="bookmaker-logo-inline" alt="{{ bookmaker.name }}">
               </div>
+              <div class="bookmaker-info-inline">
+                <span class="bookmaker-name-inline">{{ bookmaker.name }}</span>
+                <span class="bet-type-inline">{{ bookmaker.betType }}</span>
+              </div>
+              <span class="bookmaker-odd-inline">{{ bookmaker.odd }}</span>
             </div>
-            <button mat-raised-button class="calculate-button">
-              <mat-icon>flash_on</mat-icon>
-              Calcular
-            </button>
           </div>
+          <span class="profit-inline">+{{ event.profit }}%</span>
+          <button mat-raised-button class="calculate-button-inline">
+            <mat-icon>flash_on</mat-icon>
+            Calcular
+          </button>
         </div>
-      </mat-list-item>
-    </mat-list>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="events-container">
+    <div class="events-list-inline">
+      <div *ngFor="let bet of bets" class="event-item-inline">
+        <span class="sport-tag-inline">
+          <mat-icon>{{ getSportIcon(bet.event.sport_id) }}</mat-icon>
+        </span>
+        <div class="event-item-inline-content">
+          <div class="match-league-inline">
+            <span class="match-info-inline">{{ bet.event.name }}</span>
+            <span class="league-inline">{{ bet.event.league }}</span>
+          </div>
+          <div class="date-time-inline">
+            <mat-icon>schedule</mat-icon>
+            <div class="date-time-text">
+              <span>{{ formatDate(bet.event.started_at) }}</span>
+              <span>{{ formatTime(bet.event.started_at) }}</span>
+            </div>
+          </div>
+          <div class="bookmakers-inline">
+            <!-- bookmaker_1 -->
+            <div class="bookmaker-inline">
+              <div class="logo-wrapper-inline">
+                <img [src]="getBookmakerIcon(bet.bookmaker_1.id)" class="bookmaker-logo-inline" alt="{{ bet.bookmaker_1.name }}">
+              </div>
+              <div class="bookmaker-info-inline">
+                <span class="bookmaker-name-inline">{{ bet.bookmaker_1.name }}</span>
+                <span class="bet-type-inline">{{ bet.bet.market }}-{{ bet.bet.period }}/{{ bet.bookmaker_1.line }}</span>
+              </div>
+              <span class="bookmaker-odd-inline">{{ bet.bookmaker_1.koef }}</span>
+            </div>
+
+            <!-- bookmaker_2 -->
+            <div class="bookmaker-inline reverse">
+              <div class="logo-wrapper-inline">
+                <img [src]="getBookmakerIcon(bet.bookmaker_2.id)" class="bookmaker-logo-inline" alt="{{ bet.bookmaker_2.name }}">
+              </div>
+              <div class="bookmaker-info-inline">
+                <span class="bookmaker-name-inline">{{ bet.bookmaker_2.name }}</span>
+                <span class="bet-type-inline">{{ bet.bet.market }}-{{ bet.bet.period }}/{{ bet.bookmaker_2.line }}</span>
+              </div>
+              <span class="bookmaker-odd-inline">{{ bet.bookmaker_2.koef }}</span>
+            </div>
+          </div>
+          <span class="profit-inline">+{{ bet.bet.param }}%</span>
+          <button mat-raised-button class="calculate-button-inline" (click)="openCalculator(bet)">
+            <mat-icon>flash_on</mat-icon>
+            Calcular
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

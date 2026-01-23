@@ -7,6 +7,11 @@ import { surebetDemoData } from './surebet.demo';
 import { MediaObserver } from '@angular/flex-layout';
 import { map, takeUntil } from 'rxjs/operators';
 import { componentDestroyed } from '../../../@fury/shared/component-destroyed';
+import { SurebetService } from '../../core/services/surebet.service';
+import { getSportIcon } from '../../core/constants/sport-icons';
+import { getBookmakerIcon } from '../../core/constants/bookmakers';
+import { MatDialog } from '@angular/material/dialog';
+import { CalculatorComponent } from './calculator/calculator.component';
 
 @Component({
   selector: 'fury-surebet',
@@ -38,17 +43,18 @@ export class SurebetComponent implements OnInit, OnDestroy {
       bookmakers: [
         {
           name: 'Bet365',
-          logo: 'assets/img/avatars/1.jpg',
+          logo: 'assets/img/bets/bookmakers/bet365.png',
           betType: 'Over 2.5',
           odd: 2.10
         },
         {
           name: 'Betfair',
-          logo: 'assets/img/avatars/2.jpg',
+          logo: 'assets/img/bets/bookmakers/betfair.png',
           betType: 'Under 2.5',
           odd: 1.95
         }
-      ]
+      ],
+      icon: 'sports_soccer'
     },
     {
       id: 2,
@@ -62,17 +68,18 @@ export class SurebetComponent implements OnInit, OnDestroy {
       bookmakers: [
         {
           name: '1xBet',
-          logo: 'assets/img/avatars/3.jpg',
+          logo: 'assets/img/bets/bookmakers/1xbet.png',
           betType: 'Home Win',
           odd: 1.85
         },
         {
           name: 'William Hill',
-          logo: 'assets/img/avatars/4.jpg',
+          logo: 'assets/img/bets/bookmakers/williamhill.png',
           betType: 'Away Win',
           odd: 2.05
         }
-      ]
+      ],
+      icon: 'sports_basketball'
     },
     {
       id: 3,
@@ -86,17 +93,18 @@ export class SurebetComponent implements OnInit, OnDestroy {
       bookmakers: [
         {
           name: 'Betway',
-          logo: 'assets/img/avatars/5.jpg',
+          logo: 'assets/img/bets/bookmakers/betway.png',
           betType: 'Player 1',
           odd: 1.65
         },
         {
           name: 'Unibet',
-          logo: 'assets/img/avatars/6.jpg',
+          logo: 'assets/img/bets/bookmakers/unibet.png',
           betType: 'Player 2',
           odd: 2.30
         }
-      ]
+      ],
+      icon: 'sports_tennis'
     },
     {
       id: 4,
@@ -110,24 +118,160 @@ export class SurebetComponent implements OnInit, OnDestroy {
       bookmakers: [
         {
           name: 'Bwin',
-          logo: 'assets/img/avatars/7.jpg',
+          logo: 'assets/img/bets/bookmakers/bwin.png',
           betType: 'TU(3.5) for Team2 - Corners',
           odd: 2.25
         },
         {
           name: 'Pinnacle',
-          logo: 'assets/img/avatars/8.jpg',
+          logo: 'assets/img/bets/bookmakers/pinnacle.png',
           betType: 'TO(3.5) for Team2 - Corners',
           odd: 3.10
         }
-      ]
+      ],
+      icon: 'sports_football'
     }
   ];
+
+  bets = [
+    {
+        "bet": {
+            "market": "Corners",
+            "param": 9.5,
+            "period": "Tiempo Completo"
+        },
+        "bookmaker_1": {
+            "id": 83,
+            "koef": 2.25,
+            "line": "OVER",
+            "link": "https://www.bet365.com/#/AC/B1/C1/D13/E456739/F2/",
+            "name": "Bet365"
+        },
+        "bookmaker_2": {
+            "id": 485,
+            "koef": 2.9,
+            "line": "UNDER",
+            "link": "https://www.pinnacle.com/en/betting-odds/soccer/brazil/paulista-a1/411249930/sao-paulo-sp-portuguesa-sp",
+            "name": "Pinnacle"
+        },
+        "event": {
+            "away": "Portuguesa-SP",
+            "home": "São Paulo-SP",
+            "id": 411249930,
+            "league": "Brazil. Paulista A1",
+            "name": "São Paulo-SP - Portuguesa-SP",
+            "sport": "Futbol",
+            "sport_id": 7,
+            "started_at": 1769034600
+        },
+        "id": "MTkwNDUwNjIzM3w1MSw5LjUsMCwwLDAsMA",
+        "margin": 12.12
+    },
+    {
+        "bet": {
+            "market": "Corners",
+            "param": 10.5,
+            "period": "Tiempo Completo"
+        },
+        "bookmaker_1": {
+            "id": 83,
+            "koef": 2,
+            "line": "OVER",
+            "link": "https://www.bet365.com/#/AC/B1/C1/D13/E456739/F2/",
+            "name": "Bet365"
+        },
+        "bookmaker_2": {
+            "id": 485,
+            "koef": 1.8,
+            "line": "UNDER",
+            "link": "https://www.pinnacle.com/en/betting-odds/soccer/brazil/paulista-a1/411249930/sao-paulo-sp-portuguesa-sp",
+            "name": "Pinnacle"
+        },
+        "event": {
+            "away": "Portuguesa-SP",
+            "home": "São Paulo-SP",
+            "id": 411249930,
+            "league": "Brazil. Paulista A1",
+            "name": "São Paulo-SP - Portuguesa-SP",
+            "sport": "Futbol",
+            "sport_id": 7,
+            "started_at": 1769034600
+        },
+        "id": "MTkwNDUwNjIzM3w1MSwxMC4wLDAsMCwwLDA",
+        "margin": 5.56
+    },
+    {
+        "bet": {
+            "market": "Corners",
+            "param": 11.5,
+            "period": "Tiempo Completo"
+        },
+        "bookmaker_1": {
+            "id": 83,
+            "koef": 2.15,
+            "line": "OVER",
+            "link": "https://www.bet365.com/#/AC/B1/C1/D13/E456739/F2/",
+            "name": "Bet365"
+        },
+        "bookmaker_2": {
+            "id": 485,
+            "koef": 1.65,
+            "line": "UNDER",
+            "link": "https://www.pinnacle.com/en/betting-odds/soccer/brazil/paulista-a1/411249930/sao-paulo-sp-portuguesa-sp",
+            "name": "Pinnacle"
+        },
+        "event": {
+            "away": "Portuguesa-SP",
+            "home": "São Paulo-SP",
+            "id": 411249930,
+            "league": "Brazil. Paulista A1",
+            "name": "São Paulo-SP - Portuguesa-SP",
+            "sport": "Futbol",
+            "sport_id": 7,
+            "started_at": 1769034600
+        },
+        "id": "MTkwNDUwNjIzM3w1MSwxMC41LDAsMCwwLDA",
+        "margin": 7.12
+    },
+    {
+        "bet": {
+            "market": "Points",
+            "param": 220.5,
+            "period": "Tiempo Completo"
+        },
+        "bookmaker_1": {
+            "id": 101,
+            "koef": 1.95,
+            "line": "OVER",
+            "name": "William Hill"
+        },
+        "bookmaker_2": {
+            "id": 202,
+            "koef": 1.8,
+            "line": "UNDER",
+            "name": "Betfair"
+        },
+        "event": {
+            "away": "Warriors",
+            "home": "Lakers",
+            "id": 411249931,
+            "league": "NBA",
+            "name": "Lakers - Warriors",
+            "sport": "Basketball",
+            "sport_id": 2,
+            "started_at": 1769040000
+        },
+        "id": "MTkwNDUwNjIzM3w1MSwxMS4wLDAsMCwwLDA",
+        "margin": 6.84
+    }
+]
 
   @ViewChild('messagesScroll', { read: ScrollbarComponent, static: true }) messagesScroll: ScrollbarComponent;
 
   constructor(private cd: ChangeDetectorRef,
-              private mediaObserver: MediaObserver) {
+              private mediaObserver: MediaObserver,
+              private surebetService: SurebetService,
+              private dialog: MatDialog) {
   }
 
   col(colAmount: number) {
@@ -149,6 +293,15 @@ export class SurebetComponent implements OnInit, OnDestroy {
 
     this.surebets = sortBy(surebetDemoData, 'lastMessageTime').reverse();
     this.activeSurebet = this.surebets[0];
+
+    this.surebetService.getSurebets().subscribe(
+      surebets => {
+        console.log('Surebets recibidos:', surebets);
+      },
+      error => {
+        console.error('Error al obtener surebets:', error);
+      }
+    );
 
     this.mediaObserver.asObservable().pipe(
       map(() => this.mediaObserver.isActive('lt-md')),
@@ -192,6 +345,42 @@ export class SurebetComponent implements OnInit, OnDestroy {
 
   clearMessages(activeSurebet) {
     activeSurebet.messages.length = 0;
+  }
+
+  getSportIcon(sportId: number): string {
+    return getSportIcon(sportId);
+  }
+
+  getBookmakerIcon(bookmakerId: number): string {
+    return getBookmakerIcon(bookmakerId);
+  }
+
+  formatDate(timestamp: number): string {
+    return moment.unix(timestamp).format('DD/MM/YYYY');
+  }
+
+  formatTime(timestamp: number): string {
+    return moment.unix(timestamp).format('HH:mm');
+  }
+
+  openCalculator(bet: any): void {
+    const betCopy = JSON.parse(JSON.stringify(bet));
+    
+    if (betCopy.bookmaker_1.koef > betCopy.bookmaker_2.koef) {
+      betCopy.over = betCopy.bookmaker_1;
+      betCopy.under = betCopy.bookmaker_2;
+    } else {
+      betCopy.over = betCopy.bookmaker_2;
+      betCopy.under = betCopy.bookmaker_1;
+    }
+    
+    this.dialog.open(CalculatorComponent, {
+      width: '1100px',
+      maxWidth: '95vw',
+      panelClass: 'calculator-dialog',
+      backdropClass: 'calculator-backdrop',
+      data: betCopy
+    });
   }
 
   ngOnDestroy(): void {}

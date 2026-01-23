@@ -81,26 +81,23 @@ $green: #8CE332;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  .events-list {
+  .events-list-inline {
     padding: 0;
+    margin-top: 24px;
 
-    .event-item {
+    .event-item-inline {
       height: auto;
-      margin-bottom: 2.5rem;
-      padding: 0;
-      border-radius: 2rem;
+      margin-bottom: 32px;
+      padding: 12px 16px;
+      padding-left: 70px;
+      border-radius: 50px;
       background: $card-bg;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
-      border: 2px solid rgba($gold, 0.2);
-      border-left: 4px solid $gold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba($gold, 0.3);
       position: relative;
       overflow: visible;
 
-      .sport-tag {
-        position: absolute;
-        top: -14px;
-        left: 16px;
+      .sport-tag-inline {
         background: $gold;
         color: $dark-bg;
         width: 60px;
@@ -109,29 +106,219 @@ $green: #8CE332;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1;
+        position: absolute;
+        left: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
 
         mat-icon {
-          font-size: 28px;
-          width: 28px;
-          height: 28px;
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
         }
       }
 
-      .profit {
-        position: absolute;
-        top: -1.5rem;
-        right: 1.5rem;
-        width: 70px;
-        height: 70px;
+      .event-item-inline-content {
+        display: grid;
+        grid-template-columns: 200px 100px 1fr 80px 120px;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+      }
+
+      .match-league-inline {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+
+      .match-info-inline {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: white;
+        white-space: normal;
+        line-height: 1.2;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .league-inline {
+        font-size: 1rem;
+        color: rgba(white, 0.6);
+        white-space: nowrap;
+        line-height: 1;
+      }
+
+      .date-time-inline {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: $gold;
+        flex-shrink: 0;
+
+        mat-icon {
+          font-size: 12px;
+          width: 12px;
+          height: 12px;
+        }
+
+        .date-time-text {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          line-height: 1.1;
+
+          span {
+            white-space: nowrap;
+          }
+        }
+      }
+
+      .bookmakers-inline {
+        display: flex;
+        gap: 16px;
+        flex: 1;
+        min-width: 0;
+        overflow: visible;
+
+        .bookmaker-inline {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          padding-left: 32px;
+          background: rgba($dark-bg, 0.8);
+          border-radius: 30px;
+          border: 1.5px solid rgba($gold, 0.6);
+          position: relative;
+          transition: all 0.2s;
+          flex: 1;
+          min-width: 0;
+          overflow: visible;
+
+          &.reverse {
+            flex-direction: row-reverse;
+            padding-left: 12px;
+            padding-right: 32px;
+
+            .logo-wrapper-inline {
+              left: auto;
+              right: -2px;
+            }
+
+            .bookmaker-info-inline {
+              margin-left: 0;
+              margin-right: 28px;
+              text-align: right;
+            }
+          }
+
+          &:hover {
+            background: rgba($gold, 0.9);
+            border-color: $gold;
+
+            .bookmaker-info-inline {
+              .bookmaker-name-inline,
+              .bet-type-inline {
+                color: $dark-bg;
+              }
+            }
+
+            .bookmaker-odd-inline {
+              background: $dark-bg;
+              color: $gold;
+            }
+          }
+
+          .logo-wrapper-inline {
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            background: $card-bg;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+          }
+
+          .bookmaker-logo-inline {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid white;
+          }
+
+          .bookmaker-info-inline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-left: 28px;
+            line-height: 1;
+            flex: 1;
+            min-width: 0;
+
+            .bookmaker-name-inline {
+              font-size: 1rem;
+              color: rgba(white, 0.7);
+              line-height: 1;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .bet-type-inline {
+              font-size: 1rem;
+              font-weight: 600;
+              color: white;
+              line-height: 1;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+
+          .bookmaker-odd-inline {
+            background: $gold;
+            color: $dark-bg;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            min-width: 32px;
+            min-height: 32px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+
+      .profit-inline {
+        background: transparent;
+        color: white;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        font-weight: 900;
+        white-space: nowrap;
+        flex-shrink: 0;
+        width: 85px;
+        height: 85px;
+        margin: -22px 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1;
-        font-size: 1.5rem;
-        font-weight: 900;
-        color: white;
         text-shadow: 
           -1px -1px 0 $dark-bg,
           1px -1px 0 $dark-bg,
@@ -142,216 +329,28 @@ $green: #8CE332;
         background-position: center;
         background-repeat: no-repeat;
         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        position: relative;
+        z-index: 2;
       }
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba($gold, 0.2);
-        border-color: rgba($gold, 0.4);
-      }
+      .calculate-button-inline {
+        background: $gold;
+        color: $dark-bg;
+        font-weight: 600;
+        height: 36px;
+        border-radius: 18px;
+        white-space: nowrap;
+        flex-shrink: 0;
 
-      .event-content {
-        width: 100%;
-        padding: 12px 16px;
-        color: white;
-
-        .event-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 8px;
-          padding-bottom: 4px;
-          border-bottom: 1px solid rgba($gold, 0.5);
-
-          .event-info {
-            flex: 1;
-            padding-left: 80px;
-            padding-right: 60px;
-
-            .event-title {
-              display: flex;
-              align-items: flex-end;
-              gap: 12px;
-              margin-bottom: 4px;
-
-              .match-name {
-                font-size: 1.2rem;
-                font-weight: 700;
-                color: white;
-                line-height: 1;
-              }
-
-              .league {
-                font-size: 1rem;
-                opacity: 0.6;
-                color: rgba(white, 0.8);
-                margin-left: 8px;
-                line-height: 0.9;
-              }
-            }
-
-            .date-time {
-              display: flex;
-              align-items: center;
-              font-size: 1rem;
-              color: $gold;
-
-              mat-icon {
-                font-size: 13px;
-                height: 13px;
-                width: 13px;
-                margin-right: 4px;
-              }
-            }
-          }
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          margin-right: 4px;
         }
 
-        .bookmakers-container {
-          display: flex;
-          align-items: center;
-          gap: 0;
-
-          .bookmakers-wrapper {
-            display: flex;
-            gap: 12px;
-            flex: 0 0 70%;
-            margin-left: 0%;
-          }
-
-          .calculate-button {
-            background: $gold;
-            color: $dark-bg;
-            font-weight: 700;
-            padding: 0 24px;
-            height: 48px;
-            border-radius: 24px;
-            white-space: nowrap;
-            flex: 0 0 20%;
-            margin-left: 10%;
-            font-size: 1.5rem;
-
-            mat-icon {
-              margin-right: 4px;
-              font-size: 1.5rem;
-            }
-
-            &:hover {
-              background: darken($gold, 10%);
-            }
-          }
-
-          .bookmaker {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            padding-left: 48px;
-            background: rgba($dark-bg, 1);
-            border-radius: 50px;
-            border: 1.5px solid rgba($gold, 0.5);
-            transition: all 0.2s;
-            position: relative;
-
-            &.reverse {
-              flex-direction: row-reverse;
-              padding-left: 8px;
-              padding-right: 48px;
-
-              .logo-wrapper {
-                left: auto;
-                right: -2px;
-              }
-
-              .bookmaker-info {
-                margin-left: 0;
-                margin-right: 45px;
-                text-align: right;
-              }
-            }
-
-            &:hover {
-              background: rgba($gold, 1);
-              border-color: rgba($card-bg, 1);
-              color: $card-bg;
-
-              .bookmaker-info {
-                .bookmaker-name {
-                  color: rgba($card-bg, 0.9);
-                }
-
-                .bet-type {
-                  color: $card-bg;
-                }
-              }
-
-              .bookmaker-odd {
-                background: $card-bg;
-                color: $gold;
-              }
-            }
-
-            .logo-wrapper {
-              position: absolute;
-              left: -2px;
-              top: 50%;
-              transform: translateY(-50%);
-              width: 70px;
-              height: 70px;
-              background: $card-bg;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              z-index: 0;
-            }
-
-            .bookmaker-logo {
-              width: 45px;
-              height: 45px;
-              border-radius: 50%;
-              object-fit: cover;
-              border: none;
-              position: relative;
-              z-index: 1;
-            }
-
-            .bookmaker-info {
-              flex: 1;
-              display: flex;
-              flex-direction: column;
-              gap: 0px;
-              margin-left: 45px;
-
-              .bookmaker-name {
-                font-size: 0.85rem;
-                opacity: 0.7;
-                color: rgba(white, 0.7);
-              }
-
-              .bet-type {
-                font-size: 1rem;
-                font-weight: 600;
-                color: white;
-              }
-            }
-
-            .bookmaker-odd {
-              background: $gold;
-              color: $card-bg;
-              padding: 0px;
-              border-radius: 50%;
-              font-size: 16px;
-              font-weight: 700;
-              border: 2px solid rgba(white, 1);
-              min-width: 38px;
-              min-height: 38px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-          }
+        &:hover {
+          background: darken($gold, 10%);
         }
       }
     }
