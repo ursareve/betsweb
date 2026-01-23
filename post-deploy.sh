@@ -13,5 +13,5 @@ echo "📦 Installing dependencies..."
 npm install
 
 echo "🏗️ Building the application into $BUILD_DIR..."
-npm run --configuration production build -- --output-path="$BUILD_DIR"
+npm run build -- --output-path="$BUILD_DIR"
 echo "✅ Build completed."
