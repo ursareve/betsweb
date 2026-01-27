@@ -1,8 +1,12 @@
 <div class="surebet">
   <div class="header elevation"></div>
   
-  <button mat-fab color="primary" class="flash-test-button" (click)="triggerFlash()">
-    <mat-icon>flash_on</mat-icon>
+  <button mat-fab color="primary" class="flash-test-button" (click)="refreshNow()">
+    <span class="countdown-text">{{ countdown }}</span>
+  </button>
+  
+  <button mat-fab color="accent" class="toggle-refresh-button" (click)="toggleAutoRefresh()">
+    <mat-icon>{{ isAutoRefreshActive ? 'pause' : 'play_arrow' }}</mat-icon>
   </button>
   
   <!-- <div class="events-container">
@@ -46,8 +50,30 @@
   </div> -->
 
   <div class="events-container">
+    <div class="legend-inline">
+      <div class="legend-item">
+        <img src="/assets/img/bets/shield_gray.png" class="legend-icon">
+        <span>≤1%</span>
+      </div>
+      <div class="legend-item">
+        <img src="/assets/img/bets/shield_blue.png" class="legend-icon">
+        <span>1-5%</span>
+      </div>
+      <div class="legend-item">
+        <img src="/assets/img/bets/shield_green.png" class="legend-icon">
+        <span>5-10%</span>
+      </div>
+      <div class="legend-item">
+        <img src="/assets/img/bets/shield_gold.png" class="legend-icon">
+        <span>10-20%</span>
+      </div>
+      <div class="legend-item">
+        <img src="/assets/img/bets/shield_red.png" class="legend-icon">
+        <span>>20%</span>
+      </div>
+    </div>
     <div class="events-list-inline">
-      <div *ngFor="let bet of bets" class="event-item-inline">
+      <div *ngFor="let bet of bets" class="event-item-inline" [class.new-item]="isNewBet(bet.id)">
         <span class="sport-tag-inline">
           <mat-icon>{{ getSportIcon(bet.event.sport_id) }}</mat-icon>
         </span>
@@ -56,9 +82,13 @@
             <span class="match-info-inline">{{ bet.event.name }}</span>
             <span class="league-inline">{{ bet.event.league }}</span>
           </div>
-          <div class="date-time-inline">
-            <mat-icon>schedule</mat-icon>
-            <div class="date-time-text">
+          <div class="date-bet-info-inline">
+            <div class="bet-type-inline">
+              <span>{{ bet.bet.line }} - ( {{ bet.bet.param }} )</span>
+              <span>[ {{ bet.bet.period }} ]</span>
+            </div>
+            <div class="date-time-inline">
+              <mat-icon>schedule</mat-icon>
               <span>{{ formatDate(bet.event.started_at) }}</span>
               <span>{{ formatTime(bet.event.started_at) }}</span>
             </div>
@@ -71,7 +101,7 @@
               </div>
               <div class="bookmaker-info-inline">
                 <span class="bookmaker-name-inline">{{ bet.bookmaker_1.name }}</span>
-                <span class="bet-type-inline">{{ bet.bet.market }}-{{ bet.bet.period }}/{{ bet.bookmaker_1.line }}</span>
+                <span class="bookmaker-line-inline">{{ bet.bookmaker_1.line }}</span>
               </div>
               <span class="bookmaker-odd-inline">{{ bet.bookmaker_1.koef }}</span>
             </div>
@@ -83,15 +113,14 @@
               </div>
               <div class="bookmaker-info-inline">
                 <span class="bookmaker-name-inline">{{ bet.bookmaker_2.name }}</span>
-                <span class="bet-type-inline">{{ bet.bet.market }}-{{ bet.bet.period }}/{{ bet.bookmaker_2.line }}</span>
+                <span class="bookmaker-line-inline">{{ bet.bookmaker_2.line }}</span>
               </div>
               <span class="bookmaker-odd-inline">{{ bet.bookmaker_2.koef }}</span>
             </div>
           </div>
-          <span class="profit-inline">+{{ bet.bet.param }}%</span>
-          <button mat-raised-button class="calculate-button-inline" (click)="openCalculator(bet)">
-            <mat-icon>flash_on</mat-icon>
-            Calcular
+          <span class="profit-inline" [style.background-image]="'url(' + getShieldImage(bet.margin) + ')'">+{{ bet.margin }}%</span>
+          <button mat-icon-button class="calculate-button-inline" (click)="openCalculator(bet)">
+            <mat-icon>calculate</mat-icon>
           </button>
         </div>
       </div>

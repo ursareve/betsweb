@@ -31,7 +31,7 @@ export class ThemeService {
     toolbarVisible: true,
     toolbarPosition: 'fixed',
     footerVisible: true,
-    footerPosition: 'fixed'
+    footerPosition: 'above-fixed'
   });
   config$ = this._configSubject.asObservable();
 

@@ -14,6 +14,13 @@
 
   .name {
     letter-spacing: 0;
+
+    .brand-name {
+      font-family: 'Offenbacher', sans-serif;
+      font-weight: 900;
+      color: #c39826;
+      font-size: 1.4em;
+    }
   }
 
   .action {

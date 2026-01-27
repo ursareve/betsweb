@@ -77,6 +77,22 @@
         <span class="currency">$</span>
         <input type="text" [(ngModel)]="totalStake" (input)="calculateOptimalStakes()" placeholder="1000.00">
       </div>
+      <div class="slider-wrapper">
+        <span class="slider-label">Step: ${{ roundingStep | number }}</span>
+        <select [(ngModel)]="roundingStep" class="step-select">
+          <option [value]="5000">$5,000</option>
+          <option [value]="10000">$10,000</option>
+          <option [value]="20000">$20,000</option>
+          <option [value]="50000">$50,000</option>
+          <option [value]="100000">$100,000</option>
+        </select>
+      </div>
+      <button class="round-btn" (click)="calculateRoundedOptimalStakes()" matTooltip="Redondear a miles">
+        <mat-icon>calculate</mat-icon>
+      </button>
+      <button class="reset-btn" (click)="resetToOriginal()" matTooltip="Resetear">
+        <mat-icon>refresh</mat-icon>
+      </button>
     </div>
   </div>
 

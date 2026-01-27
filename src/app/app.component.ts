@@ -49,14 +49,16 @@ export class AppComponent {
         name: 'APPS',
         position: 5,
         type: 'subheading',
-        customClass: 'first-subheading'
+        customClass: 'first-subheading',
+        visible: false
       },
       {
         name: 'Dashboard',
-        routeOrFunction: '/',
+        routeOrFunction: '/dashboard',
         icon: 'dashboard',
         position: 10,
-        pathMatchExact: true
+        pathMatchExact: false,
+        visible: true
       },
       {
         name: 'All-In-One Table',
@@ -64,57 +66,67 @@ export class AppComponent {
         icon: 'assignment',
         badge: '22',
         position: 15,
+        visible: false
       },
       {
         name: 'Calendar',
         routeOrFunction: '/apps/calendar',
         icon: 'date_range',
-        position: 20
+        position: 20,
+        visible: false
       },
       {
         name: 'Inbox',
         routeOrFunction: '/apps/inbox',
         icon: 'inbox',
-        position: 25
+        position: 25,
+        visible: false
       },
       {
         name: 'Chat',
         routeOrFunction: '/apps/chat',
         icon: 'chat',
         position: 30,
-        badge: '14'
+        badge: '14',
+        visible: false
       },
       {
         name: 'Surebets',
         routeOrFunction: '/bets/surebets',
         icon: 'trending_up',
-        position: 31
+        position: 31,
+        visible: true
       },
       {
         name: 'USER INTERFACE',
         type: 'subheading',
-        position: 35
+        position: 35,
+        visible: false
       },
       {
         name: 'Components',
         routeOrFunction: '/components',
         icon: 'layers',
-        position: 40
+        position: 40,
+        visible: false
       },
       {
         name: 'Forms',
         icon: 'description',
         position: 45,
+        visible: false,
         subItems: [
           {
             name: 'Form Elements',
             routeOrFunction: '/forms/form-elements',
-            position: 10
+            position: 10,
+            visible: false
           },
           {
             name: 'Form Wizard',
             routeOrFunction: '/forms/form-wizard',
-            position: 15
+            position: 15,
+            visible: false
           }
         ]
       },
@@ -122,38 +134,45 @@ export class AppComponent {
         name: 'Drag & Drop',
         routeOrFunction: '/drag-and-drop',
         icon: 'mouse',
-        position: 55
+        position: 55,
+        visible: false
       },
       {
         name: 'WYSIWYG Editor',
         routeOrFunction: '/editor',
         icon: 'format_shapes',
-        position: 60
+        position: 60,
+        visible: false
       },
       {
         name: 'PAGES',
         type: 'subheading',
-        position: 65
+        position: 65,
+        visible: false
       },
       {
         name: 'Authentication',
         icon: 'lock',
         position: 66,
+        visible: false,
         subItems: [
           {
             name: 'Login Page',
             routeOrFunction: '/login',
-            position: 5
+            position: 5,
+            visible: false
           },
           {
             name: 'Register Page',
             routeOrFunction: '/register',
-            position: 10
+            position: 10,
+            visible: false
           },
           {
             name: 'Forgot Password',
             routeOrFunction: '/forgot-password',
-            position: 15
+            position: 15,
+            visible: false
           }
         ]
       },
@@ -161,26 +180,31 @@ export class AppComponent {
         name: 'Page Layouts',
         icon: 'view_compact',
         position: 67,
+        visible: false,
         subItems: [
           {
             name: 'Simple',
             routeOrFunction: '/page-layouts/simple',
-            position: 5
+            position: 5,
+            visible: false
           },
           {
             name: 'Simple Tabbed',
             routeOrFunction: '/page-layouts/simple-tabbed',
-            position: 5
+            position: 5,
+            visible: false
           },
           {
             name: 'Card',
             routeOrFunction: '/page-layouts/card',
-            position: 10
+            position: 10,
+            visible: false
           },
           {
             name: 'Card Tabbed',
             routeOrFunction: '/page-layouts/card-tabbed',
-            position: 15
+            position: 15,
+            visible: false
           },
         ],
         badge: '4'
@@ -189,40 +213,49 @@ export class AppComponent {
         name: 'Coming Soon',
         routeOrFunction: '/coming-soon',
         icon: 'watch_later',
-        position: 68
+        position: 68,
+        visible: false
       },
       {
         name: 'Blank',
         routeOrFunction: '/blank',
         icon: 'picture_in_picture',
-        position: 69
+        position: 69,
+        visible: false
       },
       {
         name: 'Material Icons',
         routeOrFunction: '/icons',
         icon: 'grade',
-        position: 75
+        position: 75,
+        visible: false
       },
       {
         name: 'Multi-Level Menu',
         icon: 'menu',
         position: 85,
+        visible: false,
         subItems: [
           {
             name: 'Level 1',
+            visible: false,
             subItems: [
               {
                 name: 'Level 2',
+                visible: false,
                 subItems: [
                   {
                     name: 'Level 3',
+                    visible: false,
                     subItems: [
                       {
                         name: 'Level 4',
+                        visible: false,
                         subItems: [
                           {
                             name: 'Level 5',
-                            routeOrFunction: '/level1/level2/level3/level4/level5'
+                            routeOrFunction: '/level1/level2/level3/level4/level5',
+                            visible: false
                           }
                         ]
                       }
@@ -238,7 +271,7 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'false';
     
     if (isLoggedIn) {
       this.router.navigate(['/bets/surebets']);

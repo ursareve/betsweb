@@ -1,4 +1,5 @@
-<div [class.collapsed]="isCollapsed$ | async"
+<div *ngIf="item.visible !== false"
+     [class.collapsed]="isCollapsed$ | async"
      [class.dropdown-open]="dropdownOpen$ | async"
      [ngClass]="levelClass"
      class="sidenav-item">
@@ -46,6 +47,8 @@
 
 
   <div [@dropdownOpen]="dropdownOpen$ | async" class="dropdown" fxLayout="column">
-    <fury-sidenav-item *ngFor="let subItem of item.subItems" [item]="subItem" [level]="level+1"></fury-sidenav-item>
+    <ng-container *ngFor="let subItem of item.subItems">
+      <fury-sidenav-item *ngIf="subItem.visible !== false" [item]="subItem" [level]="level+1"></fury-sidenav-item>
+    </ng-container>
   </div>
 </div>

@@ -1,25 +1,42 @@
 import { Observable } from 'rxjs';
 
-export interface Surebet {
-  id: number;
-  sport: string;
-  league: string;
-  homeTeam: string;
-  awayTeam: string;
-  date: string;
-  time: string;
-  profit: number;
-  bookmakers: Bookmaker[];
+export interface SurebetBet {
+  id: string;
+  margin: number;
+  bet: {
+    market: string;
+    param: number;
+    period: string;
+  };
+  bookmaker_1: {
+    id: number;
+    koef: number;
+    line: string;
+    link?: string;
+    name: string;
+  };
+  bookmaker_2: {
+    id: number;
+    koef: number;
+    line: string;
+    link?: string;
+    name: string;
+  };
+  event: {
+    away: string;
+    home: string;
+    id: number;
+    league: string;
+    name: string;
+    sport: string;
+    sport_id: number;
+    started_at: number;
+  };
 }
 
-export interface Bookmaker {
-  name: string;
-  logo: string;
-  betType: string;
-  odd: number;
-}
+export type Surebet = SurebetBet[];
 
 export abstract class SurebetRepository {
-  abstract getSurebets(): Observable<Surebet[]>;
-  abstract getSurebetById(id: number): Observable<Surebet>;
+  abstract getSurebets(): Observable<Surebet>;
+  abstract getSurebetById(id: string): Observable<SurebetBet>;
 }

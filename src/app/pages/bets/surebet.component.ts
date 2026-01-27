@@ -12,6 +12,7 @@ import { getSportIcon } from '../../core/constants/sport-icons';
 import { getBookmakerIcon } from '../../core/constants/bookmakers';
 import { MatDialog } from '@angular/material/dialog';
 import { CalculatorComponent } from './calculator/calculator.component';
+import { Surebet, SurebetBet } from '../../core/repositories/surebet.repository';
 
 @Component({
   selector: 'fury-surebet',
@@ -29,6 +30,12 @@ export class SurebetComponent implements OnInit, OnDestroy {
 
   private _gap = 16;
   gap = `${this._gap}px`;
+  refreshIntervalMinutes = 1;
+  countdown = 60;
+  isAutoRefreshActive = true;
+  private refreshInterval: any;
+  private countdownInterval: any;
+  private newBetIds = new Set<string>();
 
   events = [
     {
@@ -133,7 +140,7 @@ export class SurebetComponent implements OnInit, OnDestroy {
     }
   ];
 
-  bets = [
+  bets: Surebet = [
     {
         "bet": {
             "market": "Corners",
@@ -294,14 +301,8 @@ export class SurebetComponent implements OnInit, OnDestroy {
     this.surebets = sortBy(surebetDemoData, 'lastMessageTime').reverse();
     this.activeSurebet = this.surebets[0];
 
-    this.surebetService.getSurebets().subscribe(
-      surebets => {
-        console.log('Surebets recibidos:', surebets);
-      },
-      error => {
-        console.error('Error al obtener surebets:', error);
-      }
-    );
+    this.loadSurebets();
+    this.startAutoRefresh();
 
     this.mediaObserver.asObservable().pipe(
       map(() => this.mediaObserver.isActive('lt-md')),
@@ -383,5 +384,138 @@ export class SurebetComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+  }
+
+  private loadSurebets(): void {
+    this.surebetService.getSurebets().subscribe(
+      surebets => {
+        console.log('Surebets recibidos:', surebets);
+        // Reemplazar margin con número aleatorio
+        surebets.forEach(bet => {
+          bet.margin = this.getRandomNumber(bet.margin);
+        });
+        this.updateBets(surebets);
+      },
+      error => {
+        console.error('Error al obtener surebets:', error);
+      }
+    );
+  }
+
+  private updateBets(newBets: Surebet): void {
+    const newBetsMap = new Map(newBets.map(bet => [bet.id, bet]));
+    const currentBetsMap = new Map(this.bets.map(bet => [bet.id, bet]));
+    let hasChanges = false;
+
+    // Verificar si hay bets a eliminar
+    const betsToRemove = this.bets.filter(bet => !newBetsMap.has(bet.id));
+    if (betsToRemove.length > 0) {
+      hasChanges = true;
+      console.log('Bets eliminados:', betsToRemove.length);
+    }
+
+    // Eliminar bets que ya no existen
+    this.bets = this.bets.filter(bet => newBetsMap.has(bet.id));
+
+    // Agregar nuevos o actualizar existentes
+    newBets.forEach(newBet => {
+      const existingBet = currentBetsMap.get(newBet.id);
+      
+      if (!existingBet) {
+        // Nuevo bet, agregarlo
+        this.bets.push(newBet);
+        hasChanges = true;
+        this.newBetIds.add(newBet.id);
+        setTimeout(() => this.newBetIds.delete(newBet.id), 2000);
+        console.log('Nuevo bet agregado:', newBet.id);
+      } else {
+        // Verificar si cambió koef o margin
+        const koefChanged = 
+          existingBet.bookmaker_1.koef !== newBet.bookmaker_1.koef ||
+          existingBet.bookmaker_2.koef !== newBet.bookmaker_2.koef;
+        const marginChanged = existingBet.margin !== newBet.margin;
+
+        if (koefChanged || marginChanged) {
+          // Actualizar el bet existente
+          const index = this.bets.findIndex(b => b.id === newBet.id);
+          if (index !== -1) {
+            this.bets[index] = newBet;
+            hasChanges = true;
+            console.log('Bet actualizado:', newBet.id, { koefChanged, marginChanged });
+          }
+        }
+      }
+    });
+
+    // Disparar animación si hubo cambios
+    if (hasChanges) {
+      this.triggerFlash();
+    }
+  }
+
+  isNewBet(betId: string): boolean {
+    return this.newBetIds.has(betId);
+  }
+
+  getShieldImage(margin: number): string {
+    if (margin <= 1) return '/assets/img/bets/shield_gray.png';
+    if (margin <= 5) return '/assets/img/bets/shield_blue.png';
+    if (margin <= 10) return '/assets/img/bets/shield_green.png';
+    if (margin <= 20) return '/assets/img/bets/shield_gold.png';
+    return '/assets/img/bets/shield_red.png';
+  }
+
+  getShieldImageTemp(margin: number): string {
+    if (margin <= 1) return '/assets/img/bets/shield_gray.png';
+    if (margin <= 50) return '/assets/img/bets/shield_blue.png';
+    if (margin <= 10) return '/assets/img/bets/shield_green.png';
+    if (margin <= 20) return '/assets/img/bets/shield_gold.png';
+    return '/assets/img/bets/shield_red.png';
+  }
+
+  getRandomNumber(margin: number): number {
+    return Math.floor(Math.random() * 99) + 1;
+  }
+
+  private startAutoRefresh(): void {
+    this.countdown = this.refreshIntervalMinutes * 60;
+    
+    this.countdownInterval = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        this.countdown = this.refreshIntervalMinutes * 60;
+      }
+    }, 1000);
+
+    this.refreshInterval = setInterval(() => {
+      this.loadSurebets();
+    }, this.refreshIntervalMinutes * 60 * 1000);
+  }
+
+  refreshNow(): void {
+    if (!this.isAutoRefreshActive) return;
+    clearInterval(this.refreshInterval);
+    clearInterval(this.countdownInterval);
+    this.loadSurebets();
+    this.startAutoRefresh();
+  }
+
+  toggleAutoRefresh(): void {
+    this.isAutoRefreshActive = !this.isAutoRefreshActive;
+    
+    if (this.isAutoRefreshActive) {
+      this.startAutoRefresh();
+    } else {
+      clearInterval(this.refreshInterval);
+      clearInterval(this.countdownInterval);
+      this.countdown = 0;
+    }
+  }
 }

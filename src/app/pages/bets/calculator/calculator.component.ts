@@ -21,6 +21,10 @@ export class CalculatorComponent {
   winwin = {} as any;
   maxOver = {} as any;
   maxUnder = {} as any;
+  originalWinwin = {} as any;
+  originalMaxOver = {} as any;
+  originalMaxUnder = {} as any;
+  roundingStep = 10000;
 
   constructor(
     public dialogRef: MatDialogRef<CalculatorComponent>,
@@ -31,8 +35,10 @@ export class CalculatorComponent {
     this.winwin = this.calculateAlwaysWin(this.baseAmount);
     this.maxOver = this.calculateMaxOver(this.baseAmount);
     this.maxUnder = this.calculateMaxUnder(this.baseAmount);
+    this.originalWinwin = { ...this.winwin };
+    this.originalMaxOver = { ...this.maxOver };
+    this.originalMaxUnder = { ...this.maxUnder };
     console.log(this.winwin, this.maxOver, this.maxUnder);
-
   }
 
   getBookmakerIcon(bookmakerId: number): string {
@@ -130,5 +136,55 @@ export class CalculatorComponent {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  roundToNearestThousand(value: number): number {
+    return Math.round(value / this.roundingStep) * this.roundingStep;
+  }
+
+  calculateRoundedOptimalStakes(): void {
+    const baseAmount = parseFloat(this.totalStake) || 200000;
+
+    // Win-Win: Aproximar para maximizar ganancia
+    const winwinOriginal = this.calculateAlwaysWin(baseAmount);
+    let winwinOver = this.roundToNearestThousand(winwinOriginal.over);
+    let winwinUnder = baseAmount - winwinOver;
+    
+    // Verificar si ajustando over hacia arriba mejora la ganancia mínima
+    const profitOverUp = (winwinOver * this.data.over.koef) - baseAmount;
+    const profitUnderUp = (winwinUnder * this.data.under.koef) - baseAmount;
+    const minProfitUp = Math.min(profitOverUp, profitUnderUp);
+    
+    // Probar ajustando hacia abajo
+    const winwinOverDown = winwinOver - this.roundingStep;
+    const winwinUnderDown = baseAmount - winwinOverDown;
+    const profitOverDown = (winwinOverDown * this.data.over.koef) - baseAmount;
+    const profitUnderDown = (winwinUnderDown * this.data.under.koef) - baseAmount;
+    const minProfitDown = Math.min(profitOverDown, profitUnderDown);
+    
+    if (minProfitDown > minProfitUp) {
+      winwinOver = winwinOverDown;
+      winwinUnder = winwinUnderDown;
+    }
+    
+    this.winwin = this.createBetResult('Gana Gana', winwinOver, winwinUnder, baseAmount);
+
+    // Max Over: Aproximar conservando la lógica
+    const maxOverOriginal = this.calculateMaxOver(baseAmount);
+    let maxOverUnder = this.roundToNearestThousand(maxOverOriginal.under);
+    let maxOverOver = baseAmount - maxOverUnder;
+    this.maxOver = this.createBetResult('Max Over', maxOverOver, maxOverUnder, baseAmount);
+
+    // Max Under: Aproximar conservando la lógica
+    const maxUnderOriginal = this.calculateMaxUnder(baseAmount);
+    let maxUnderOver = this.roundToNearestThousand(maxUnderOriginal.over);
+    let maxUnderUnder = baseAmount - maxUnderOver;
+    this.maxUnder = this.createBetResult('Max Under', maxUnderOver, maxUnderUnder, baseAmount);
+  }
+
+  resetToOriginal(): void {
+    this.winwin = { ...this.originalWinwin };
+    this.maxOver = { ...this.originalMaxOver };
+    this.maxUnder = { ...this.originalMaxUnder };
   }
 }
