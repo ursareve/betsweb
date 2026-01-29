@@ -38,5 +38,5 @@ jobs:
       - name: Deploy to VPS (rsync)
         run: |
           rsync -avz --delete \
-            dist/my-angular-app/ \
+            dist/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_PATH }}/
