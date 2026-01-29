@@ -12,6 +12,7 @@ import { getSportIcon } from '../../core/constants/sport-icons';
 import { getBookmakerIcon } from '../../core/constants/bookmakers';
 import { MatDialog } from '@angular/material/dialog';
 import { CalculatorComponent } from './calculator/calculator.component';
+import { FilterComponent } from './filter/filter.component';
 import { Surebet, SurebetBet } from '../../core/repositories/surebet.repository';
 
 @Component({
@@ -272,6 +273,8 @@ export class SurebetComponent implements OnInit, OnDestroy {
         "margin": 6.84
     }
 ]
+  searchText = '';
+  minProfit = 0;
 
   @ViewChild('messagesScroll', { read: ScrollbarComponent, static: true }) messagesScroll: ScrollbarComponent;
 
@@ -384,6 +387,15 @@ export class SurebetComponent implements OnInit, OnDestroy {
     });
   }
 
+  openFilter(): void {
+    this.dialog.open(FilterComponent, {
+      width: '1100px',
+      maxWidth: '95vw',
+      panelClass: 'filter-dialog',
+      backdropClass: 'filter-backdrop'
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
@@ -482,6 +494,22 @@ export class SurebetComponent implements OnInit, OnDestroy {
 
   getRandomNumber(margin: number): number {
     return Math.floor(Math.random() * 99) + 1;
+  }
+
+  onProfitChange(event: any) {
+    this.minProfit = event.target.value;
+  }
+
+  get filteredBets() {
+    if (!this.searchText && this.minProfit === 0) return this.bets;
+    const search = this.searchText.toLowerCase();
+    return this.bets.filter(bet => {
+      const matchesSearch = !this.searchText || 
+        bet.event.name.toLowerCase().includes(search) ||
+        bet.event.league.toLowerCase().includes(search);
+      const matchesProfit = bet.margin >= this.minProfit;
+      return matchesSearch && matchesProfit;
+    });
   }
 
   private startAutoRefresh(): void {

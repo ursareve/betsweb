@@ -1,0 +1,106 @@
+<div class="filter-modal">
+  <button mat-icon-button class="close-btn" (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="filter-header">
+    <h1 class="filter-title">Filtros de Búsqueda</h1>
+  </div>
+
+  <div class="filter-content">
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <mat-icon>store</mat-icon>
+          Casas de Apuestas
+        </h2>
+        <div class="header-actions">
+          <div class="search-input">
+            <mat-icon>search</mat-icon>
+            <input type="text" [(ngModel)]="bookmakerSearch" placeholder="Buscar...">
+            <mat-icon class="clear-icon" *ngIf="bookmakerSearch" (click)="bookmakerSearch = ''">close</mat-icon>
+          </div>
+          <div class="action-buttons">
+            <button mat-button (click)="selectAllBookmakers()">
+              <mat-icon>done_all</mat-icon>
+              Todos
+            </button>
+            <button mat-button (click)="clearAllBookmakers()">
+              <mat-icon>clear</mat-icon>
+              Ninguno
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="selected-preview" *ngIf="selectedBookmakers.size > 0">
+        <div class="preview-items">
+          <div class="preview-item" *ngFor="let bookmaker of selectedBookmakersList">
+            <img [src]="bookmaker.icon" [alt]="bookmaker.name">
+          </div>
+        </div>
+        <span class="preview-count">{{ selectedBookmakers.size }}</span>
+      </div>
+      <div class="items-grid">
+        <div *ngFor="let bookmaker of filteredBookmakers" 
+             class="item-card" 
+             [class.selected]="isBookmakerSelected(bookmaker.id)"
+             (click)="toggleBookmaker(bookmaker.id)">
+          <img [src]="bookmaker.icon" [alt]="bookmaker.name">
+          <span>{{ bookmaker.name }}</span>
+          <mat-icon class="check-icon">check_circle</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <mat-icon>sports</mat-icon>
+          Deportes
+        </h2>
+        <div class="header-actions">
+          <div class="search-input">
+            <mat-icon>search</mat-icon>
+            <input type="text" [(ngModel)]="sportSearch" placeholder="Buscar...">
+            <mat-icon class="clear-icon" *ngIf="sportSearch" (click)="sportSearch = ''">close</mat-icon>
+          </div>
+          <div class="action-buttons">
+            <button mat-button (click)="selectAllSports()">
+              <mat-icon>done_all</mat-icon>
+              Todos
+            </button>
+            <button mat-button (click)="clearAllSports()">
+              <mat-icon>clear</mat-icon>
+              Ninguno
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="selected-preview" *ngIf="selectedSports.size > 0">
+        <div class="preview-items">
+          <div class="preview-item sport-preview">
+            <mat-icon *ngFor="let sport of selectedSportsList">{{ sport.icon }}</mat-icon>
+          </div>
+        </div>
+        <span class="preview-count">{{ selectedSports.size }}</span>
+      </div>
+      <div class="items-grid">
+        <div *ngFor="let sport of filteredSports" 
+             class="item-card sport-card" 
+             [class.selected]="isSportSelected(sport.id)"
+             (click)="toggleSport(sport.id)">
+          <mat-icon>{{ sport.icon }}</mat-icon>
+          <span>{{ sport.name }}</span>
+          <mat-icon class="check-icon">check_circle</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-footer">
+    <button class="apply-btn" (click)="apply()">
+      <mat-icon>done</mat-icon>
+      <span>Aplicar Filtros</span>
+    </button>
+  </div>
+</div>

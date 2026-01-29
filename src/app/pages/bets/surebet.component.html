@@ -8,48 +8,23 @@
   <button mat-fab color="accent" class="toggle-refresh-button" (click)="toggleAutoRefresh()">
     <mat-icon>{{ isAutoRefreshActive ? 'pause' : 'play_arrow' }}</mat-icon>
   </button>
-  
-  <!-- <div class="events-container">
-    <div class="events-list-inline">
-      <div *ngFor="let event of events" class="event-item-inline">
-        <span class="sport-tag-inline">
-          <mat-icon>{{ event.icon }}</mat-icon>
-        </span>
-        <div class="event-item-inline-content">
-          <div class="match-league-inline">
-            <span class="match-info-inline">{{ event.homeTeam }} vs {{ event.awayTeam }}</span>
-            <span class="league-inline">{{ event.league }}</span>
-          </div>
-          <div class="date-time-inline">
-            <mat-icon>schedule</mat-icon>
-            <div class="date-time-text">
-              <span>{{ event.date }}</span>
-              <span>{{ event.time }}</span>
-            </div>
-          </div>
-          <div class="bookmakers-inline">
-            <div class="bookmaker-inline" *ngFor="let bookmaker of event.bookmakers; let i = index" [class.reverse]="i % 2 !== 0">
-              <div class="logo-wrapper-inline">
-                <img [src]="bookmaker.logo" class="bookmaker-logo-inline" alt="{{ bookmaker.name }}">
-              </div>
-              <div class="bookmaker-info-inline">
-                <span class="bookmaker-name-inline">{{ bookmaker.name }}</span>
-                <span class="bet-type-inline">{{ bookmaker.betType }}</span>
-              </div>
-              <span class="bookmaker-odd-inline">{{ bookmaker.odd }}</span>
-            </div>
-          </div>
-          <span class="profit-inline">+{{ event.profit }}%</span>
-          <button mat-raised-button class="calculate-button-inline">
-            <mat-icon>flash_on</mat-icon>
-            Calcular
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
   <div class="events-container">
+    <div class="search-filter-inline">
+      <mat-icon>search</mat-icon>
+      <input type="text" [(ngModel)]="searchText" placeholder="Buscar evento o liga...">
+      <mat-icon class="clear-icon" *ngIf="searchText" (click)="searchText = ''">close</mat-icon>
+    </div>
+    <div class="profit-filter-inline">
+      <span class="profit-label">Profit Mínimo: {{ minProfit }}%</span>
+      <mat-slider min="0" max="99" step="1" (input)="onProfitChange($event)" discrete>
+        <input matSliderThumb>
+      </mat-slider>
+    </div>
+    <button mat-raised-button class="filter-button" (click)="openFilter()">
+      <mat-icon>filter_list</mat-icon>
+      Filtrar
+    </button>
     <div class="legend-inline">
       <div class="legend-item">
         <img src="/assets/img/bets/shield_gray.png" class="legend-icon">
@@ -73,7 +48,7 @@
       </div>
     </div>
     <div class="events-list-inline">
-      <div *ngFor="let bet of bets" class="event-item-inline" [class.new-item]="isNewBet(bet.id)">
+      <div *ngFor="let bet of filteredBets" class="event-item-inline" [class.new-item]="isNewBet(bet.id)">
         <span class="sport-tag-inline">
           <mat-icon>{{ getSportIcon(bet.event.sport_id) }}</mat-icon>
         </span>
@@ -103,7 +78,7 @@
                 <span class="bookmaker-name-inline">{{ bet.bookmaker_1.name }}</span>
                 <span class="bookmaker-line-inline">{{ bet.bookmaker_1.line }}</span>
               </div>
-              <span class="bookmaker-odd-inline">{{ bet.bookmaker_1.koef }}</span>
+              <span class="bookmaker-odd-inline">{{ bet.bookmaker_1.koef | number:'1.2-2' }}</span>
             </div>
 
             <!-- bookmaker_2 -->
@@ -115,7 +90,7 @@
                 <span class="bookmaker-name-inline">{{ bet.bookmaker_2.name }}</span>
                 <span class="bookmaker-line-inline">{{ bet.bookmaker_2.line }}</span>
               </div>
-              <span class="bookmaker-odd-inline">{{ bet.bookmaker_2.koef }}</span>
+              <span class="bookmaker-odd-inline">{{ bet.bookmaker_2.koef | number:'1.2-2' }}</span>
             </div>
           </div>
           <span class="profit-inline" [style.background-image]="'url(' + getShieldImage(bet.margin) + ')'">+{{ bet.margin }}%</span>

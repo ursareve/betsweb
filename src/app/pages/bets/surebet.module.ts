@@ -7,6 +7,7 @@ import { ScrollbarModule } from '../../../@fury/shared/scrollbar/scrollbar.modul
 import { SurebetRoutingModule } from './surebet-routing.module';
 import { SurebetComponent } from './surebet.component';
 import { CalculatorComponent } from './calculator/calculator.component';
+import { FilterComponent } from './filter/filter.component';
 import { SurebetRepository } from '../../core/repositories/surebet.repository';
 import { SurebetApiRepository } from '../../core/repositories/surebet-api.repository';
 import { SurebetService } from '../../core/services/surebet.service';
@@ -21,7 +22,7 @@ import { SurebetService } from '../../core/services/surebet.service';
     ScrollbarModule,
     HttpClientModule
   ],
-  declarations: [SurebetComponent, CalculatorComponent],
+  declarations: [SurebetComponent, CalculatorComponent, FilterComponent],
   providers: [
     {
       provide: SurebetRepository,
