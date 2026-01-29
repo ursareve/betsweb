@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - production
-  merge_request:
+  pull_request:
     branches:
       - production
 
