@@ -432,9 +432,9 @@ export class SurebetComponent implements OnInit, OnDestroy {
       surebets => {
         console.log('Surebets recibidos:', surebets);
         // Reemplazar margin con número aleatorio
-        surebets.forEach(bet => {
-          bet.margin = this.getRandomNumber(bet.margin);
-        });
+        // surebets.forEach(bet => {
+        //   bet.margin = this.getRandomNumber(bet.margin);
+        // });
         this.updateBets(surebets);
       },
       error => {
