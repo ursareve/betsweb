@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BOOKMAKERS } from '../../../core/constants/bookmakers';
 import { SPORT_ICONS } from '../../../core/constants/sport-icons';
 
@@ -16,7 +16,10 @@ export class FilterComponent implements OnInit {
   bookmakerSearch = '';
   sportSearch = '';
 
-  constructor(private dialogRef: MatDialogRef<FilterComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<FilterComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit() {
     this.bookmakers = Object.values(BOOKMAKERS);
@@ -24,6 +27,13 @@ export class FilterComponent implements OnInit {
       id: Number(id),
       ...data
     }));
+
+    if (this.data?.selectedBookmakers) {
+      this.data.selectedBookmakers.forEach((id: number) => this.selectedBookmakers.add(id));
+    }
+    if (this.data?.selectedSports) {
+      this.data.selectedSports.forEach((id: number) => this.selectedSports.add(id));
+    }
   }
 
   get filteredBookmakers() {

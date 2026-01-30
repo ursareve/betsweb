@@ -16,9 +16,10 @@
       <mat-icon class="clear-icon" *ngIf="searchText" (click)="searchText = ''">close</mat-icon>
     </div>
     <div class="profit-filter-inline">
-      <span class="profit-label">Profit Mínimo: {{ minProfit }}%</span>
-      <mat-slider min="0" max="99" step="1" (input)="onProfitChange($event)" discrete>
-        <input matSliderThumb>
+      <span class="profit-label">Profit: {{ minProfit }}% - {{ maxProfit }}%</span>
+      <mat-slider min="0" max="99" step="1" discrete>
+        <input matSliderStartThumb [value]="minProfit" (input)="onProfitRangeChange($event)">
+        <input matSliderEndThumb [value]="maxProfit" (input)="onMaxProfitRangeChange($event)">
       </mat-slider>
     </div>
     <button mat-raised-button class="filter-button" (click)="openFilter()">

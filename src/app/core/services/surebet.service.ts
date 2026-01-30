@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SurebetRepository, Surebet, SurebetBet } from '../repositories/surebet.repository';
+import { SurebetRepository, Surebet, SurebetBet, SurebetFilter } from '../repositories/surebet.repository';
 
 @Injectable()
 export class SurebetService {
@@ -12,5 +12,9 @@ export class SurebetService {
 
   getSurebetById(id: string): Observable<SurebetBet> {
     return this.repository.getSurebetById(id);
+  }
+
+  getSurebetsFiltered(filter: SurebetFilter): Observable<Surebet> {
+    return this.repository.getSurebetsFiltered(filter);
   }
 }

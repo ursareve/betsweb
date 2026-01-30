@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SurebetRepository, Surebet, SurebetBet } from './surebet.repository';
+import { SurebetRepository, Surebet, SurebetBet, SurebetFilter } from './surebet.repository';
 import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 
@@ -24,5 +24,12 @@ export class SurebetApiRepository extends SurebetRepository {
   getSurebetById(id: string): Observable<SurebetBet> {
     const params = new HttpParams().set('access_key', environment.apiAccessKey);
     return this.http.get<SurebetBet>(`${this.apiUrl}/${id}`, { params });
+  }
+
+  getSurebetsFiltered(filter: SurebetFilter): Observable<Surebet> {
+    const params = new HttpParams().set('access_key', environment.apiAccessKey);
+    return this.http.post<{ bets: Surebet }>(`${environment.apiUrl}/${environment.version}/arbs/current`, filter, { params }).pipe(
+      map(response => response.bets)
+    );
   }
 }

@@ -36,7 +36,15 @@ export interface SurebetBet {
 
 export type Surebet = SurebetBet[];
 
+export interface SurebetFilter {
+  bookmakers: string;
+  sports: string;
+  min_margin: number;
+  max_margin: number;
+}
+
 export abstract class SurebetRepository {
   abstract getSurebets(): Observable<Surebet>;
   abstract getSurebetById(id: string): Observable<SurebetBet>;
+  abstract getSurebetsFiltered(filter: SurebetFilter): Observable<Surebet>;
 }

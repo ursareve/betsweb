@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
     // Verificar si ya está logueado
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (isLoggedIn) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/bets/surebets']);
     }
   }
 
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
           localStorage.removeItem('isLoggedIn');
         }
         
-        await this.router.navigate(['/dashboard']);
+        await this.router.navigate(['/bets/surebets']);
         this.snackbar.open('Login successful!', 'OK', { duration: 3000 });
         
         // Esperar un momento para que Firebase Auth se inicialice completamente

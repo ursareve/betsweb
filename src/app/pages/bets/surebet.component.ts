@@ -13,7 +13,7 @@ import { getBookmakerIcon } from '../../core/constants/bookmakers';
 import { MatDialog } from '@angular/material/dialog';
 import { CalculatorComponent } from './calculator/calculator.component';
 import { FilterComponent } from './filter/filter.component';
-import { Surebet, SurebetBet } from '../../core/repositories/surebet.repository';
+import { Surebet, SurebetBet, SurebetFilter } from '../../core/repositories/surebet.repository';
 
 @Component({
   selector: 'fury-surebet',
@@ -275,6 +275,9 @@ export class SurebetComponent implements OnInit, OnDestroy {
 ]
   searchText = '';
   minProfit = 0;
+  maxProfit = 99;
+  selectedBookmakers: number[] = [];
+  selectedSports: number[] = [];
 
   @ViewChild('messagesScroll', { read: ScrollbarComponent, static: true }) messagesScroll: ScrollbarComponent;
 
@@ -388,11 +391,23 @@ export class SurebetComponent implements OnInit, OnDestroy {
   }
 
   openFilter(): void {
-    this.dialog.open(FilterComponent, {
+    const dialogRef = this.dialog.open(FilterComponent, {
       width: '1100px',
       maxWidth: '95vw',
       panelClass: 'filter-dialog',
-      backdropClass: 'filter-backdrop'
+      backdropClass: 'filter-backdrop',
+      data: {
+        selectedBookmakers: this.selectedBookmakers,
+        selectedSports: this.selectedSports
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.selectedBookmakers = result.bookmakers;
+        this.selectedSports = result.sports;
+        this.loadSurebets();
+      }
     });
   }
 
@@ -406,7 +421,14 @@ export class SurebetComponent implements OnInit, OnDestroy {
   }
 
   private loadSurebets(): void {
-    this.surebetService.getSurebets().subscribe(
+    const filter: SurebetFilter = {
+      bookmakers: this.selectedBookmakers.join(','),
+      sports: this.selectedSports.join(','),
+      min_margin: this.minProfit / 100,
+      max_margin: this.maxProfit / 100
+    };
+
+    this.surebetService.getSurebetsFiltered(filter).subscribe(
       surebets => {
         console.log('Surebets recibidos:', surebets);
         // Reemplazar margin con número aleatorio
@@ -496,18 +518,26 @@ export class SurebetComponent implements OnInit, OnDestroy {
     return Math.floor(Math.random() * 99) + 1;
   }
 
-  onProfitChange(event: any) {
-    this.minProfit = event.target.value;
+  onProfitRangeChange(event: any) {
+    this.minProfit = Number(event.target.value);
+    this.cd.detectChanges();
+    this.loadSurebets();
+  }
+
+  onMaxProfitRangeChange(event: any) {
+    this.maxProfit = Number(event.target.value);
+    this.cd.detectChanges();
+    this.loadSurebets();
   }
 
   get filteredBets() {
-    if (!this.searchText && this.minProfit === 0) return this.bets;
+    if (!this.searchText && this.minProfit === 0 && this.maxProfit === 99) return this.bets;
     const search = this.searchText.toLowerCase();
     return this.bets.filter(bet => {
       const matchesSearch = !this.searchText || 
         bet.event.name.toLowerCase().includes(search) ||
         bet.event.league.toLowerCase().includes(search);
-      const matchesProfit = bet.margin >= this.minProfit;
+      const matchesProfit = bet.margin >= this.minProfit && bet.margin <= this.maxProfit;
       return matchesSearch && matchesProfit;
     });
   }
