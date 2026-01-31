@@ -1,9 +1,6 @@
 name: Deploy Angular to VPS
 
 on:
-  push:
-    branches:
-      - production
   pull_request:
     branches:
       - production
