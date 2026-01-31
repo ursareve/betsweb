@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.active-chip {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.inactive-chip {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.image-cell {
+  width: 48px;
+  padding-right: 8px !important;
+
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}

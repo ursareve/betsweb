@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { AuthGuard } from './services/auth.guard';
 import { LoginGuard } from './services/login.guard';
+import { SuperadminGuard } from './services/superadmin.guard';
 
 const routes: Routes = [
   {
@@ -90,6 +91,11 @@ const routes: Routes = [
       {
         path: 'level1/level2/level3/level4/level5',
         loadChildren: () => import('./pages/level5/level5.module').then(m => m.Level5Module),
+      },
+      {
+        path: 'users',
+        loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule),
+        canActivate: [SuperadminGuard]
       },
     ]
   }

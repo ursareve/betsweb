@@ -40,7 +40,7 @@
         <div class="stake-input">
           <span class="market-title">{{ data.bet.market }} ({{ data.bookmaker_1.line }})</span>
         </div>
-        <button class="event-btn">
+        <button class="event-btn" (click)="goToBookmaker1()">
           <mat-icon>open_in_new</mat-icon>
           <span>IR A EVENTO</span>
         </button>
@@ -62,7 +62,7 @@
         <div class="stake-input">
           <span class="market-title">{{ data.bet.market }} ({{ data.bookmaker_2.line }})</span>
         </div>
-        <button class="event-btn">
+        <button class="event-btn" (click)="goToBookmaker2()">
           <mat-icon>open_in_new</mat-icon>
           <span>IR A EVENTO</span>
         </button>

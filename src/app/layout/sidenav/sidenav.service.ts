@@ -162,6 +162,14 @@ export class SidenavService implements OnDestroy {
 
   ngOnDestroy(): void {}
 
+  updateItemVisibility(route: string, visible: boolean) {
+    const item = this.getItemByRoute(route);
+    if (item) {
+      item.visible = visible;
+      this.items = [...this.items];
+    }
+  }
+
   private getParents(item: SidenavItem, items: SidenavItem[] = []) {
     items.unshift(item);
 

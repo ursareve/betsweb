@@ -20,18 +20,18 @@
 
   <fury-scrollbar class="sidenav-items" fxFlex="auto">
     <div *ngIf="sidenavUserVisible$ | async" class="sidenav-user">
-      <img class="sidenav-user-image" src="assets/img/avatars/default.jpg">
-      <h4 class="sidenav-user-name">David Smith</h4>
-      <h5 class="sidenav-user-email">david.smith@example.com</h5>
+      <img class="sidenav-user-image" [src]="getAvatarUrl()">
+      <h4 class="sidenav-user-name">{{ currentUser?.firstName || 'Usuario' }}</h4>
+      <h5 class="sidenav-user-email">{{ currentUser?.lastName || '' }}</h5>
 
       <div class="sidenav-user-icons" fxLayout="row">
-        <a [routerLink]="['/tables/all-in-one-table']" mat-icon-button>
+        <a [routerLink]="['/users']" mat-icon-button>
           <mat-icon>assignment</mat-icon>
         </a>
         <a [routerLink]="['/apps/calendar']" mat-icon-button>
           <mat-icon>date_range</mat-icon>
         </a>
-        <a [routerLink]="['/login']" mat-icon-button>
+        <a (click)="logout()" mat-icon-button>
           <mat-icon>exit_to_app</mat-icon>
         </a>
       </div>

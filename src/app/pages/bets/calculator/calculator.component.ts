@@ -187,4 +187,16 @@ export class CalculatorComponent {
     this.maxOver = { ...this.originalMaxOver };
     this.maxUnder = { ...this.originalMaxUnder };
   }
+
+  goToBookmaker1(): void {
+    if (this.data.bookmaker_1?.link) {
+      window.open(this.data.bookmaker_1.link, '_blank');
+    }
+  }
+
+  goToBookmaker2(): void {
+    if (this.data.bookmaker_2?.link) {
+      window.open(this.data.bookmaker_2.link, '_blank');
+    }
+  }
 }

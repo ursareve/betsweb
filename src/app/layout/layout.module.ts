@@ -12,6 +12,7 @@ import { ToolbarModule } from './toolbar/toolbar.module';
 import { ConfigPanelModule } from './config-panel/config-panel.module';
 import { FurySharedModule } from '../../@fury/fury-shared.module';
 import { NavigationModule } from './navigation/navigation.module';
+import { CoreModule } from '../core/core.module';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { NavigationModule } from './navigation/navigation.module';
     MaterialModule,
     LoadingIndicatorModule,
     FurySharedModule,
+    CoreModule,
 
     // Core
     ToolbarModule,

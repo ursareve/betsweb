@@ -424,17 +424,18 @@ export class SurebetComponent implements OnInit, OnDestroy {
     const filter: SurebetFilter = {
       bookmakers: this.selectedBookmakers.join(','),
       sports: this.selectedSports.join(','),
-      min_margin: this.minProfit / 100,
-      max_margin: this.maxProfit / 100
+      min_margin: this.minProfit,
+      max_margin: this.maxProfit
     };
 
     this.surebetService.getSurebetsFiltered(filter).subscribe(
       surebets => {
         console.log('Surebets recibidos:', surebets);
+        console.log('Filtros:', filter);
         // Reemplazar margin con número aleatorio
-        surebets.forEach(bet => {
-          bet.margin = this.getRandomNumber(bet.margin);
-        });
+        // surebets.forEach(bet => {
+        //   bet.margin = this.getRandomNumber(bet.margin);
+        // });
         this.updateBets(surebets);
       },
       error => {
@@ -521,13 +522,11 @@ export class SurebetComponent implements OnInit, OnDestroy {
   onProfitRangeChange(event: any) {
     this.minProfit = Number(event.target.value);
     this.cd.detectChanges();
-    this.loadSurebets();
   }
 
   onMaxProfitRangeChange(event: any) {
     this.maxProfit = Number(event.target.value);
     this.cd.detectChanges();
-    this.loadSurebets();
   }
 
   get filteredBets() {
