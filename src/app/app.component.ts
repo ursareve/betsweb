@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, Renderer2 } from '@angular/core';
+import { Component, Inject, Renderer2, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { SidenavService } from './layout/sidenav/sidenav.service';
 import { ThemeService } from '../@fury/services/theme.service';
@@ -9,12 +9,16 @@ import { Platform } from '@angular/cdk/platform';
 import { SplashScreenService } from '../@fury/services/splash-screen.service';
 import { NotificationService } from './services/notification.service';
 import { AuthService } from './services/auth.service';
+import { NotificationServerService } from './core/services/notification-server.service';
+import { SweetAlertService } from './services/sweet-alert.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'betsweb-root',
   templateUrl: './app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
+  private notificationSubscription: Subscription | null = null;
 
   constructor(private sidenavService: SidenavService,
               private iconRegistry: MatIconRegistry,
@@ -26,7 +30,9 @@ export class AppComponent {
               private splashScreenService: SplashScreenService,
               private notificationService: NotificationService,
               private router: Router,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private notificationServer: NotificationServerService,
+              private alert: SweetAlertService) {
     this.authService.user$.subscribe(async (firebaseUser) => {
       if (firebaseUser) {
         const userDoc = await this.authService.getUserData(firebaseUser.uid);
@@ -293,6 +299,54 @@ export class AppComponent {
       this.router.navigate(['/login']);
     }
     
-    this.notificationService.listenForegroundMessages();
+    // Firebase notifications (mantener para uso futuro)
+    // this.notificationService.listenForegroundMessages();
+    
+    // Conectar al servidor de notificaciones del backend
+    this.authService.user$.subscribe(user => {
+      if (user) {
+        this.notificationServer.connect();
+        this.setupNotificationListener();
+      } else {
+        this.notificationServer.disconnect();
+      }
+    });
+  }
+
+  private setupNotificationListener(): void {
+    this.notificationSubscription = this.notificationServer.notifications$.subscribe(
+      notification => {
+        console.log('Notificación recibida en app:', notification);
+        
+        // Mostrar notificación según el tipo
+        switch (notification.type) {
+          case 'success':
+            this.alert.toast('success', notification.message);
+            break;
+          case 'error':
+            this.alert.toast('error', notification.message);
+            break;
+          case 'warning':
+            this.alert.toast('warning', notification.message);
+            break;
+          case 'info':
+            this.alert.toast('info', notification.message);
+            break;
+          default:
+            // Notificación del navegador
+            if (Notification.permission === 'granted') {
+              new Notification(notification.title, {
+                body: notification.message,
+                icon: '/assets/icons/icon-72x72.png'
+              });
+            }
+        }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.notificationSubscription?.unsubscribe();
+    this.notificationServer.disconnect();
   }
 }

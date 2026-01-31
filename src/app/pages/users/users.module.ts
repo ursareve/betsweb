@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BreadcrumbsModule } from '../../../@fury/shared/breadcrumbs/breadcrumbs.module';
 import { ListModule } from '../../../@fury/shared/list/list.module';
 import { MaterialModule } from '../../../@fury/shared/material-components.module';
@@ -19,6 +20,7 @@ import { CoreModule } from '../../core/core.module';
     MaterialModule,
     FurySharedModule,
     MatChipsModule,
+    MatSlideToggleModule,
     ListModule,
     UserCreateUpdateModule,
     BreadcrumbsModule,

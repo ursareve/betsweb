@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { UserCreateUpdateComponent } from './user-create-update.component';
 
 @NgModule({
@@ -21,7 +23,9 @@ import { UserCreateUpdateComponent } from './user-create-update.component';
     MatButtonModule,
     MatIconModule,
     MatRadioModule,
-    MatSelectModule
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   declarations: [UserCreateUpdateComponent],
   exports: [UserCreateUpdateComponent]

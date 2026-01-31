@@ -3,13 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ListColumn } from '../../../@fury/shared/list/list-column.model';
 import { UserCreateUpdateComponent } from './user-create-update/user-create-update.component';
 import { User } from '../../models/user.model';
 import { UserService } from '../../core/services/user.service';
 import { fadeInRightAnimation } from '../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../@fury/animations/fade-in-up.animation';
+import { SweetAlertService } from '../../services/sweet-alert.service';
 
 @Component({
   selector: 'fury-users',
@@ -30,6 +30,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     { name: 'Género', property: 'gender', visible: true, isModelProperty: true },
     { name: 'Rol', property: 'role', visible: true, isModelProperty: true },
     { name: 'Estado', property: 'active', visible: true, isModelProperty: true },
+    { name: 'Activo Hasta', property: 'activeUntil', visible: true, isModelProperty: true },
     { name: 'Acciones', property: 'actions', visible: true },
   ] as ListColumn[];
   pageSize = 10;
@@ -41,7 +42,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   constructor(
     private dialog: MatDialog,
     private userService: UserService,
-    private snackbar: MatSnackBar
+    private alert: SweetAlertService
   ) {}
 
   get visibleColumns() {
@@ -65,7 +66,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         this.dataSource.data = users;
       },
       error => {
-        this.snackbar.open('Error al cargar usuarios', 'OK', { duration: 3000 });
+        this.alert.error('Error', 'Error al cargar usuarios');
       }
     );
   }
@@ -82,10 +83,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
             await this.userService.updateUser(createdUser.uid, { avatarUrl });
           }
           
-          this.snackbar.open('Usuario creado exitosamente', 'OK', { duration: 3000 });
+          this.alert.success('Creado', 'Usuario creado exitosamente');
           this.loadUsers();
         } catch (error: any) {
-          this.snackbar.open('Error al crear usuario: ' + error.message, 'OK', { duration: 5000 });
+          this.alert.error('Error', 'Error al crear usuario: ' + error.message);
         }
       }
     });
@@ -105,29 +106,34 @@ export class UsersComponent implements OnInit, AfterViewInit {
               userData.avatarUrl = avatarUrl;
             } catch (uploadError: any) {
               console.error('Error al subir imagen:', uploadError);
-              this.snackbar.open('Usuario actualizado pero la imagen no se pudo subir', 'OK', { duration: 3000 });
+              this.alert.warning('Advertencia', 'Usuario actualizado pero la imagen no se pudo subir');
             }
           }
           
           await this.userService.updateUser(user.uid, userData);
-          this.snackbar.open('Usuario actualizado exitosamente', 'OK', { duration: 3000 });
+          this.alert.success('Actualizado', 'Usuario actualizado exitosamente');
           this.loadUsers();
         } catch (error: any) {
-          this.snackbar.open('Error al actualizar usuario: ' + error.message, 'OK', { duration: 5000 });
+          this.alert.error('Error', 'Error al actualizar usuario: ' + error.message);
         }
       }
     });
   }
 
   deleteUser(user: User) {
-    if (confirm(`¿Está seguro de eliminar al usuario ${user.firstName} ${user.lastName}?`)) {
-      this.userService.deleteUser(user.uid).then(() => {
-        this.snackbar.open('Usuario eliminado exitosamente', 'OK', { duration: 3000 });
-        this.loadUsers();
-      }).catch(error => {
-        this.snackbar.open('Error al eliminar usuario: ' + error.message, 'OK', { duration: 5000 });
-      });
-    }
+    this.alert.confirmDelete(
+      '¿Eliminar usuario?',
+      `Se eliminará a ${user.firstName} ${user.lastName}`
+    ).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.deleteUser(user.uid).then(() => {
+          this.alert.success('Eliminado', 'Usuario eliminado exitosamente');
+          this.loadUsers();
+        }).catch(error => {
+          this.alert.error('Error', 'Error al eliminar usuario: ' + error.message);
+        });
+      }
+    });
   }
 
   onFilterChange(value: string) {
@@ -147,13 +153,58 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return user.avatarUrl || `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=random`;
   }
 
-  resetPassword(user: User) {
-    if (confirm(`¿Enviar correo de restablecimiento de contraseña a ${user.email}?`)) {
-      this.userService.resetPassword(user.email).then(() => {
-        this.snackbar.open('Correo de restablecimiento enviado exitosamente', 'OK', { duration: 3000 });
-      }).catch(error => {
-        this.snackbar.open('Error al enviar correo: ' + error.message, 'OK', { duration: 5000 });
-      });
+  formatDate(date: any): string {
+    if (!date) return '-';
+    
+    // Si es un Timestamp de Firestore
+    if (date.seconds) {
+      const d = new Date(date.seconds * 1000);
+      return d.toLocaleDateString('es-ES');
     }
+    
+    // Si es una fecha normal
+    const d = date instanceof Date ? date : new Date(date);
+    return d.toLocaleDateString('es-ES');
+  }
+
+  toggleUserStatus(user: User, newStatus: boolean): void {
+    const action = newStatus ? 'activar' : 'desactivar';
+    
+    this.alert.confirm(
+      `¿${newStatus ? 'Activar' : 'Desactivar'} usuario?`,
+      `Se ${action}á a ${user.firstName} ${user.lastName}`,
+      `Sí, ${action}`
+    ).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.toggleUserStatus(user.uid, newStatus).then(() => {
+          this.alert.success(
+            newStatus ? 'Usuario activado' : 'Usuario desactivado',
+            `${user.firstName} ${user.lastName} ha sido ${newStatus ? 'activado' : 'desactivado'}`
+          );
+          this.loadUsers();
+        }).catch(error => {
+          this.alert.error('Error', 'Error al cambiar estado: ' + error.message);
+          this.loadUsers();
+        });
+      } else {
+        this.loadUsers();
+      }
+    });
+  }
+
+  resetPassword(user: User) {
+    this.alert.confirm(
+      '¿Restablecer contraseña?',
+      `Se enviará un correo a ${user.email}`,
+      'Sí, enviar'
+    ).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.resetPassword(user.email).then(() => {
+          this.alert.success('Enviado', 'Correo de restablecimiento enviado exitosamente');
+        }).catch(error => {
+          this.alert.error('Error', 'Error al enviar correo: ' + error.message);
+        });
+      }
+    });
   }
 }

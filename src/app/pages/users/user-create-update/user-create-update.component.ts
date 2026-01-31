@@ -30,6 +30,16 @@ export class UserCreateUpdateComponent implements OnInit {
       this.defaults = {} as User;
     }
 
+    // Convertir activeUntil de Timestamp a Date si es necesario
+    let activeUntilValue = null;
+    if (this.defaults.activeUntil) {
+      if ((this.defaults.activeUntil as any).seconds) {
+        activeUntilValue = new Date((this.defaults.activeUntil as any).seconds * 1000);
+      } else {
+        activeUntilValue = this.defaults.activeUntil;
+      }
+    }
+
     this.form = this.fb.group({
       uid: [this.defaults.uid || ''],
       firstName: [this.defaults.firstName || '', Validators.required],
@@ -40,6 +50,7 @@ export class UserCreateUpdateComponent implements OnInit {
       gender: [this.defaults.gender || 'masculino', Validators.required],
       role: [this.defaults.role || 'guest', Validators.required],
       active: [this.defaults.active ?? true],
+      activeUntil: [activeUntilValue],
       avatarUrl: [this.defaults.avatarUrl || '']
     });
 

@@ -39,6 +39,7 @@
     "rxjs": "^7.0.0",
     "screenfull": "~6.0.0",
     "simplebar": "~5.3.6",
+    "sweetalert2": "^11.26.17",
     "tslib": "^2.0.0",
     "zone.js": "~0.13.3"
   },

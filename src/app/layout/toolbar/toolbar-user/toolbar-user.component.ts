@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../core/services/user.service';
 import { StorageService } from '../../../core/services/storage.service';
 import { User } from '../../../models/user.model';
 import { ProfileUpdateComponent } from './profile-update/profile-update.component';
+import { SweetAlertService } from '../../../services/sweet-alert.service';
 
 @Component({
   selector: 'fury-toolbar-user',
@@ -22,7 +22,7 @@ export class ToolbarUserComponent implements OnInit {
     private userService: UserService,
     private storageService: StorageService,
     private dialog: MatDialog,
-    private snackbar: MatSnackBar
+    private alert: SweetAlertService
   ) { }
 
   ngOnInit() {
@@ -71,10 +71,10 @@ export class ToolbarUserComponent implements OnInit {
           const avatarUrl = await this.storageService.uploadUserAvatar(avatarFile, this.currentUser.uid);
           await this.userService.updateUser(this.currentUser.uid, { avatarUrl });
           this.currentUser.avatarUrl = avatarUrl;
-          this.snackbar.open('Foto de perfil actualizada', 'OK', { duration: 3000 });
+          this.alert.success('Actualizado', 'Foto de perfil actualizada');
         } catch (error) {
           console.error('Error al actualizar avatar:', error);
-          this.snackbar.open('Error al actualizar foto de perfil', 'OK', { duration: 3000 });
+          this.alert.error('Error', 'Error al actualizar foto de perfil');
         }
       }
     });

@@ -9,6 +9,14 @@ export const environment = {
   apiUrl: 'http://194.163.187.97/api',
   version: 'v1',
   apiAccessKey: '7rN2kLp9QxWbV5mJt3Yf',
+  // Servidor de notificaciones del backend
+  notificationServer: {
+    enabled: true, // Cambiar a false para usar Firebase
+    url: 'ws://194.163.187.97/push', // URL del servidor WebSocket
+    reconnectAttempts: 5,
+    reconnectDelay: 3000
+  },
+  // Firebase (mantener para uso futuro)
   firebaseConfig: {
     apiKey: "AIzaSyAeQowCM4rVVsrydCGio9XS2CWshGqgZY4",
     authDomain: "betsweb-beeba.firebaseapp.com",

@@ -10,6 +10,7 @@ export interface User {
   gender: Gender;
   role: UserRole;
   active: boolean;
+  activeUntil?: Date;
   avatarUrl?: string;
   createdAt: Date;
   updatedAt?: Date;
@@ -24,6 +25,7 @@ export interface CreateUserData {
   gender: Gender;
   role: UserRole;
   active?: boolean;
+  activeUntil?: Date;
   avatarUrl?: string;
 }
 
@@ -34,5 +36,6 @@ export interface UpdateUserData {
   gender?: Gender;
   role?: UserRole;
   active?: boolean;
+  activeUntil?: Date;
   avatarUrl?: string;
 }
