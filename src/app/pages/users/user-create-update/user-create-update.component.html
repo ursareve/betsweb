@@ -1,0 +1,90 @@
+<div mat-dialog-title>{{ isCreateMode() ? 'Crear' : 'Actualizar' }} Usuario</div>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content>
+
+    <div fxLayout="column" fxLayoutAlign="center center" style="margin-bottom: 24px;">
+      <div class="avatar-preview">
+        <img [src]="previewUrl || 'https://ui-avatars.com/api/?name=User&background=random'" alt="Avatar">
+      </div>
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none">
+      <button type="button" mat-raised-button color="primary" (click)="fileInput.click()" style="margin-top: 16px">
+        <mat-icon>upload</mat-icon>
+        Subir Imagen
+      </button>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <mat-label>Nombres</mat-label>
+        <input type="text" formControlName="firstName" matInput required>
+      </mat-form-field>
+
+      <mat-form-field fxFlex>
+        <mat-label>Apellidos</mat-label>
+        <input type="text" formControlName="lastName" matInput required>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <mat-label>Email</mat-label>
+        <input type="email" formControlName="email" matInput required>
+      </mat-form-field>
+
+      <mat-form-field fxFlex *ngIf="isCreateMode()">
+        <mat-label>Contraseña</mat-label>
+        <input type="password" formControlName="password" matInput required>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <mat-label>Documento</mat-label>
+        <input type="text" formControlName="document" matInput required>
+      </mat-form-field>
+
+      <mat-form-field fxFlex>
+        <mat-label>Género</mat-label>
+        <mat-select formControlName="gender" required>
+          <mat-option *ngFor="let gender of genders" [value]="gender">
+            {{ gender | titlecase }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="role" required>
+          <mat-option *ngFor="let role of roles" [value]="role">
+            {{ role | titlecase }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field fxFlex>
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="active" required>
+          <mat-option [value]="true">Activo</mat-option>
+          <mat-option [value]="false">Inactivo</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+    <button type="button" mat-button mat-dialog-close>CANCELAR</button>
+    <button *ngIf="isCreateMode()"
+            mat-flat-button
+            color="primary"
+            [disabled]="!form.valid">CREAR USUARIO
+    </button>
+    <button *ngIf="isUpdateMode()"
+            mat-flat-button
+            color="primary"
+            [disabled]="!form.valid">ACTUALIZAR USUARIO
+    </button>
+  </mat-dialog-actions>
+</form>

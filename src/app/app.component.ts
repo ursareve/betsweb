@@ -27,6 +27,13 @@ export class AppComponent {
               private notificationService: NotificationService,
               private router: Router,
               private authService: AuthService) {
+    this.authService.user$.subscribe(async (firebaseUser) => {
+      if (firebaseUser) {
+        const userDoc = await this.authService.getUserData(firebaseUser.uid);
+        const isSuperadmin = userDoc?.role === 'superadmin';
+        this.sidenavService.updateItemVisibility('/users', isSuperadmin);
+      }
+    });
     this.route.queryParamMap.pipe(
       filter(queryParamMap => queryParamMap.has('style'))
     ).subscribe(queryParamMap => this.themeService.setStyle(queryParamMap.get('style')));
@@ -50,7 +57,7 @@ export class AppComponent {
         position: 5,
         type: 'subheading',
         customClass: 'first-subheading',
-        visible: false
+        visible: true
       },
       {
         name: 'Dashboard',
@@ -101,6 +108,13 @@ export class AppComponent {
         name: 'USER INTERFACE',
         type: 'subheading',
         position: 35,
+        visible: true
+      },
+      {
+        name: 'Usuarios',
+        routeOrFunction: '/users',
+        icon: 'lock',
+        position: 36,
         visible: false
       },
       {

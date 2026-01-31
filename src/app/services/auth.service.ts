@@ -4,17 +4,19 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
   user,
-  User
+  User as FirebaseUser
 } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  user$: Observable<User | null> = user(this.auth);
+  user$: Observable<FirebaseUser | null> = user(this.auth);
 
   constructor(private auth: Auth, private firestore: Firestore) {}
 
@@ -39,15 +41,25 @@ export class AuthService {
     return this.auth.currentUser;
   }
 
-  private async createUserDocumentIfNotExists(user: User) {
+  async getUserData(uid: string): Promise<User | null> {
+    const userDocRef = doc(this.firestore, `users/${uid}`);
+    const userDoc = await getDoc(userDocRef);
+    return userDoc.exists() ? userDoc.data() as User : null;
+  }
+
+  private async createUserDocumentIfNotExists(user: FirebaseUser) {
     const userDocRef = doc(this.firestore, `users/${user.uid}`);
     const userDoc = await getDoc(userDocRef);
     
     if (!userDoc.exists()) {
       await setDoc(userDocRef, {
-        name: user.displayName || 'Usuario',
+        uid: user.uid,
+        firstName: user.displayName || 'Usuario',
+        lastName: '',
         email: user.email,
-        role: 'user',
+        document: '',
+        gender: 'masculino',
+        role: 'guest',
         active: true,
         createdAt: new Date()
       });
@@ -60,5 +72,9 @@ export class AuthService {
       const userDocRef = doc(this.firestore, `users/${user.uid}`);
       await setDoc(userDocRef, { fcmToken: token }, { merge: true });
     }
+  }
+
+  async resetPassword(email: string): Promise<void> {
+    return await sendPasswordResetEmail(this.auth, email);
   }
 }

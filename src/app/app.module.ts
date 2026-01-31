@@ -15,6 +15,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideMessaging, getMessaging } from '@angular/fire/messaging';
+import { provideStorage, getStorage } from '@angular/fire/storage';
 import { UserRepository } from './domain/repositories/user.repository';
 import { FirebaseUserRepository } from './infrastructure/repositories/firebase-user.repository';
 
@@ -40,7 +41,8 @@ import { FirebaseUserRepository } from './infrastructure/repositories/firebase-u
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
-    provideMessaging(() => getMessaging())
+    provideMessaging(() => getMessaging()),
+    provideStorage(() => getStorage())
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],
