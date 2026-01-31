@@ -12,7 +12,7 @@ export const environment = {
   // Servidor de notificaciones del backend
   notificationServer: {
     enabled: true, // Cambiar a false para usar Firebase
-    url: 'ws://194.163.187.97/push', // URL del servidor WebSocket
+    url: 'http://194.163.187.97/push/', // URL del servidor WebSocket
     reconnectAttempts: 5,
     reconnectDelay: 3000
   },

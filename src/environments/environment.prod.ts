@@ -7,7 +7,7 @@ export const environment = {
   // Servidor de notificaciones del backend
   notificationServer: {
     enabled: true,
-    url: 'ws://194.163.187.97/push',
+    url: 'http://194.163.187.97/push/', // URL del servidor WebSocket
     reconnectAttempts: 5,
     reconnectDelay: 3000
   },
