@@ -71,9 +71,10 @@
                                    [options]="salesSummaryOptions"
                                    class="fullheight"></fury-sales-summary-widget>
 
-        <fury-quick-info-widget class="route-animations-elements" fxFlex="grow" value="234" label="Customers"
-                                [background]="'#009688'" color="white"
-                                icon="people"></fury-quick-info-widget>
+        <fury-realtime-users-widget 
+          [data$]="onlineUsersData$" 
+          fxFlex="grow"
+          class="route-animations-elements"></fury-realtime-users-widget>
       </div>
 
 

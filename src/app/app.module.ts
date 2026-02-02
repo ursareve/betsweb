@@ -19,6 +19,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideMessaging, getMessaging } from '@angular/fire/messaging';
 import { provideStorage, getStorage } from '@angular/fire/storage';
+import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { UserRepository } from './domain/repositories/user.repository';
 import { FirebaseUserRepository } from './infrastructure/repositories/firebase-user.repository';
 import { PushNotificationModalComponent } from './shared/components/push-notification-modal/push-notification-modal.component';
@@ -51,7 +52,8 @@ import { PushNotificationModalComponent } from './shared/components/push-notific
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideMessaging(() => getMessaging()),
-    provideStorage(() => getStorage())
+    provideStorage(() => getStorage()),
+    provideFunctions(() => getFunctions())
   ],
   declarations: [AppComponent, PushNotificationModalComponent],
   bootstrap: [AppComponent],

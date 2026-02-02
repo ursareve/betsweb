@@ -51,7 +51,8 @@ export class UserCreateUpdateComponent implements OnInit {
       role: [this.defaults.role || 'guest', Validators.required],
       active: [this.defaults.active ?? true],
       activeUntil: [activeUntilValue],
-      avatarUrl: [this.defaults.avatarUrl || '']
+      avatarUrl: [this.defaults.avatarUrl || ''],
+      maxSessions: [this.defaults.maxSessions || 1, [Validators.required, Validators.min(1)]]
     });
 
     if (this.mode === 'update') {

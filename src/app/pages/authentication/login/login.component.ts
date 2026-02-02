@@ -96,13 +96,13 @@ export class LoginComponent implements OnInit {
           }
         }
         
-        // Guardar o eliminar email e isLoggedIn según el toggle
+        // Guardar isLoggedIn siempre, email solo si marca recordarme
+        localStorage.setItem('isLoggedIn', 'true');
+        
         if (this.rememberMe) {
           localStorage.setItem(this.REMEMBER_EMAIL_KEY, email);
-          localStorage.setItem('isLoggedIn', 'true');
         } else {
           localStorage.removeItem(this.REMEMBER_EMAIL_KEY);
-          localStorage.removeItem('isLoggedIn');
         }
         
         await this.router.navigate(['/bets/surebets']);

@@ -14,6 +14,9 @@ export interface User {
   avatarUrl?: string;
   createdAt: Date;
   updatedAt?: Date;
+  maxSessions?: number;
+  activeSessionsCount?: number;
+  hasActiveSession?: boolean;
 }
 
 export interface CreateUserData {
@@ -27,6 +30,7 @@ export interface CreateUserData {
   active?: boolean;
   activeUntil?: Date;
   avatarUrl?: string;
+  maxSessions?: number;
 }
 
 export interface UpdateUserData {
@@ -38,4 +42,7 @@ export interface UpdateUserData {
   active?: boolean;
   activeUntil?: Date;
   avatarUrl?: string;
+  maxSessions?: number;
+  activeSessionsCount?: number;
+  hasActiveSession?: boolean;
 }

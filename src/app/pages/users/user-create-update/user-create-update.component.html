@@ -73,13 +73,19 @@
       </mat-form-field>
     </div>
 
-    <div fxLayout="column">
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
       <mat-form-field fxFlex>
         <mat-label>Activo Hasta</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="activeUntil" placeholder="Seleccione fecha">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
         <mat-hint>Fecha límite de activación del usuario</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field fxFlex>
+        <mat-label>Máximo de Sesiones</mat-label>
+        <input type="number" formControlName="maxSessions" matInput required min="1">
+        <mat-hint>Número máximo de sesiones simultáneas</mat-hint>
       </mat-form-field>
     </div>
 

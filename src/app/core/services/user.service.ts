@@ -52,4 +52,15 @@ export class UserService {
   resetPassword(email: string): Promise<void> {
     return this.authService.resetPassword(email);
   }
+
+  resetUserSessions(uid: string): Promise<void> {
+    return this.repository.updateUser(uid, {
+      activeSessionsCount: 0,
+      hasActiveSession: false
+    });
+  }
+
+  forceLogoutUser(uid: string): Promise<void> {
+    return this.authService.forceLogoutUser(uid);
+  }
 }

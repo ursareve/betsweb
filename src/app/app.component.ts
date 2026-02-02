@@ -21,6 +21,7 @@ import { PushNotificationModalComponent } from './shared/components/push-notific
 })
 export class AppComponent implements OnDestroy {
   private notificationSubscription: Subscription | null = null;
+  private tokenValidationInterval: any = null;
 
   constructor(private sidenavService: SidenavService,
               private iconRegistry: MatIconRegistry,
@@ -311,8 +312,10 @@ export class AppComponent implements OnDestroy {
       if (user) {
         this.notificationServer.connect();
         this.setupNotificationListener();
+        this.startTokenValidation();
       } else {
         this.notificationServer.disconnect();
+        this.stopTokenValidation();
       }
     });
   }
@@ -322,41 +325,64 @@ export class AppComponent implements OnDestroy {
       notification => {
         console.log('Notificación recibida en app:', notification);
         
-        // Si es un anuncio general, mostrar modal
-        if (notification.type === 'general_announcement' && notification.data?.announcement) {
-          this.dialog.open(PushNotificationModalComponent, {
-            data: {
-              subject: notification.data.announcement.subject,
-              content: notification.data.announcement.content,
-              type: notification.type
-            },
-            panelClass: 'push-notification-dialog',
-            disableClose: false,
-            hasBackdrop: true,
-            backdropClass: 'push-notification-backdrop'
-          });
-          return;
-        }
-        
-        // Mostrar notificación según el tipo
+        // Handler para diferentes tipos de notificaciones
         switch (notification.type) {
+          case 'general_announcement':
+            // Anuncio general para todos los usuarios
+            if (notification.data?.announcement) {
+              this.dialog.open(PushNotificationModalComponent, {
+                data: {
+                  subject: notification.data.announcement.subject,
+                  content: notification.data.announcement.content,
+                  type: notification.type
+                },
+                panelClass: 'push-notification-dialog',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'push-notification-backdrop'
+              });
+            }
+            break;
+
+          case 'user_message':
+            // Mensaje específico para un usuario
+            if (notification.message || notification.data?.message) {
+              const messageData = notification.message || notification.data.message;
+              this.dialog.open(PushNotificationModalComponent, {
+                data: {
+                  subject: messageData.subject || 'Mensaje Personal',
+                  content: messageData.content || notification.message,
+                  type: notification.type
+                },
+                panelClass: 'push-notification-dialog',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'push-notification-backdrop'
+              });
+            }
+            break;
+
           case 'success':
             this.alert.toast('success', notification.message);
             break;
+
           case 'error':
             this.alert.toast('error', notification.message);
             break;
+
           case 'warning':
             this.alert.toast('warning', notification.message);
             break;
+
           case 'info':
             this.alert.toast('info', notification.message);
             break;
+
           default:
-            // Notificación del navegador
+            // Notificación del navegador para tipos desconocidos
             if (Notification.permission === 'granted') {
               new Notification(notification.title, {
-                body: notification.message,
+                body: notification.message || JSON.stringify(notification.data),
                 icon: '/assets/icons/icon-72x72.png'
               });
             }
@@ -368,5 +394,31 @@ export class AppComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.notificationSubscription?.unsubscribe();
     this.notificationServer.disconnect();
+    this.stopTokenValidation();
+  }
+
+  private startTokenValidation(): void {
+    // Verificar token cada 15 minutos
+    this.tokenValidationInterval = setInterval(async () => {
+      try {
+        const user = this.authService.getCurrentUser();
+        if (user) {
+          // Forzar refresco del token para verificar si sigue siendo válido
+          await user.getIdToken(true);
+        }
+      } catch (error) {
+        console.log('Token inválido, cerrando sesión...');
+        await this.authService.signOut();
+        this.router.navigate(['/login']);
+        this.alert.toast('warning', 'Tu sesión ha sido cerrada');
+      }
+    }, 15 * 60 * 1000); // 15 minutos
+  }
+
+  private stopTokenValidation(): void {
+    if (this.tokenValidationInterval) {
+      clearInterval(this.tokenValidationInterval);
+      this.tokenValidationInterval = null;
+    }
   }
 }

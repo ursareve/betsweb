@@ -4,4 +4,7 @@ export interface User {
   email: string;
   role: string;
   active: boolean;
+  maxSessions?: number;
+  activeSessionsCount?: number;
+  hasActiveSession?: boolean;
 }

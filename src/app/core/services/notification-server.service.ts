@@ -12,11 +12,21 @@ export interface ServerNotification {
   timestamp: number;
 }
 
+export interface OnlineUsersData {
+  count: number;
+  users: Array<{
+    localId: string;
+    role: string;
+    connectedAt?: number;
+  }>;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationServerService {
   private notificationSubject = new Subject<ServerNotification>();
+  private onlineUsersSubject = new Subject<OnlineUsersData>();
   private socket: WebSocket | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = environment.notificationServer.reconnectAttempts;
@@ -27,6 +37,10 @@ export class NotificationServerService {
 
   get notifications$(): Observable<ServerNotification> {
     return this.notificationSubject.asObservable();
+  }
+
+  get onlineUsers$(): Observable<OnlineUsersData> {
+    return this.onlineUsersSubject.asObservable();
   }
 
   connect(): void {
@@ -60,13 +74,15 @@ export class NotificationServerService {
         // Registrar usuario en el servidor
         this.authService.getUserData(user.uid).then(userData => {
           if (userData) {
-            this.send({ 
+            const registerMessage = { 
               type: 'register', 
               user: { 
                 localId: userData.uid, 
                 role: userData.role.toUpperCase() 
               } 
-            });
+            };
+            console.log('📤 Enviando registro al servidor push:', registerMessage);
+            this.send(registerMessage);
             console.log('📝 Usuario registrado en el servidor');
           }
         });
@@ -76,6 +92,20 @@ export class NotificationServerService {
         try {
           const data = JSON.parse(event.data);
           console.log('📬 Notificación recibida:', data);
+          
+          // Si es respuesta de usuarios online
+          if (data.type === 'online_users') {
+            console.log('👥 Usuarios online recibidos:', {
+              count: data.count,
+              users: data.users,
+              fullData: data
+            });
+            this.onlineUsersSubject.next({
+              count: data.count || 0,
+              users: data.users || []
+            });
+            return;
+          }
           
           // Crear notificación con estructura estándar
           const notification: ServerNotification = {
@@ -139,5 +169,10 @@ export class NotificationServerService {
 
   isConnected(): boolean {
     return this.socket?.readyState === WebSocket.OPEN;
+  }
+
+  requestOnlineUsers(): void {
+    console.log('📤 Solicitando usuarios online al servidor push...');
+    this.send({ type: 'online_users' });
   }
 }

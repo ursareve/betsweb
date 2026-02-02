@@ -207,4 +207,21 @@ export class UsersComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  forceLogoutUser(user: User) {
+    this.alert.confirm(
+      '¿Forzar cierre de sesión?',
+      `Se cerrarán TODAS las sesiones de ${user.firstName} ${user.lastName} y se revocarán sus tokens`,
+      'Sí, forzar logout'
+    ).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.forceLogoutUser(user.uid).then(() => {
+          this.alert.success('Logout forzado', 'Usuario desconectado exitosamente');
+          this.loadUsers();
+        }).catch(error => {
+          this.alert.error('Error', 'Error al forzar logout: ' + error.message);
+        });
+      }
+    });
+  }
 }

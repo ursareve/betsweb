@@ -107,6 +107,8 @@ export class DashboardComponent implements OnInit {
     role: 'user',
     active: true
   };
+  private _onlineUsersDataSubject = new ReplaySubject<RealtimeUsersWidgetData>(30);
+  onlineUsersData$: Observable<RealtimeUsersWidgetData> = this._onlineUsersDataSubject.asObservable();
 
   constructor(private dashboardService: DashboardService,
               private router: Router,
@@ -244,6 +246,36 @@ export class DashboardComponent implements OnInit {
     this.recentSalesData$ = this.dashboardService.getRecentSalesData();
 
     this.advancedPieChartData$ = this.dashboardService.getAdvancedPieChartData();
+    
+    // Prefill con 30 valores iniciales en 0
+    for (let i = 0; i < 30; i++) {
+      this._onlineUsersDataSubject.next({
+        label: moment().subtract(30 - i, 'minutes').fromNow(),
+        value: 0
+      } as RealtimeUsersWidgetData);
+    }
+    
+    // Suscribirse a usuarios online
+    this.notificationServerService.onlineUsers$.subscribe(data => {
+      this._onlineUsersDataSubject.next({
+        label: moment().fromNow(),
+        value: data.count
+      } as RealtimeUsersWidgetData);
+    });
+    
+    // Solicitar usuarios online cada 1 minuto
+    setInterval(() => {
+      if (this.notificationServerService.isConnected()) {
+        this.notificationServerService.requestOnlineUsers();
+      }
+    }, 60000); // 1 minuto
+    
+    // Solicitar inmediatamente
+    setTimeout(() => {
+      if (this.notificationServerService.isConnected()) {
+        this.notificationServerService.requestOnlineUsers();
+      }
+    }, 2000);
   }
 
   async save() {
