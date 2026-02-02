@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, Renderer2, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { SidenavService } from './layout/sidenav/sidenav.service';
 import { ThemeService } from '../@fury/services/theme.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +13,7 @@ import { AuthService } from './services/auth.service';
 import { NotificationServerService } from './core/services/notification-server.service';
 import { SweetAlertService } from './services/sweet-alert.service';
 import { Subscription } from 'rxjs';
+import { PushNotificationModalComponent } from './shared/components/push-notification-modal/push-notification-modal.component';
 
 @Component({
   selector: 'betsweb-root',
@@ -32,7 +34,8 @@ export class AppComponent implements OnDestroy {
               private router: Router,
               private authService: AuthService,
               private notificationServer: NotificationServerService,
-              private alert: SweetAlertService) {
+              private alert: SweetAlertService,
+              private dialog: MatDialog) {
     this.authService.user$.subscribe(async (firebaseUser) => {
       if (firebaseUser) {
         const userDoc = await this.authService.getUserData(firebaseUser.uid);
@@ -299,10 +302,11 @@ export class AppComponent implements OnDestroy {
       this.router.navigate(['/login']);
     }
     
+    // FCM deshabilitado temporalmente - Solo se usa push del servidor backend
     // Firebase notifications (mantener para uso futuro)
     // this.notificationService.listenForegroundMessages();
     
-    // Conectar al servidor de notificaciones del backend
+    // Conectar al servidor de notificaciones del backend (WebSocket)
     this.authService.user$.subscribe(user => {
       if (user) {
         this.notificationServer.connect();
@@ -317,6 +321,22 @@ export class AppComponent implements OnDestroy {
     this.notificationSubscription = this.notificationServer.notifications$.subscribe(
       notification => {
         console.log('Notificación recibida en app:', notification);
+        
+        // Si es un anuncio general, mostrar modal
+        if (notification.type === 'general_announcement' && notification.data?.announcement) {
+          this.dialog.open(PushNotificationModalComponent, {
+            data: {
+              subject: notification.data.announcement.subject,
+              content: notification.data.announcement.content,
+              type: notification.type
+            },
+            panelClass: 'push-notification-dialog',
+            disableClose: false,
+            hasBackdrop: true,
+            backdropClass: 'push-notification-backdrop'
+          });
+          return;
+        }
         
         // Mostrar notificación según el tipo
         switch (notification.type) {

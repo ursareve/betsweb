@@ -60,7 +60,13 @@ export class NotificationServerService {
         // Registrar usuario en el servidor
         this.authService.getUserData(user.uid).then(userData => {
           if (userData) {
-            this.send({ type: 'register', user: userData });
+            this.send({ 
+              type: 'register', 
+              user: { 
+                localId: userData.uid, 
+                role: userData.role.toUpperCase() 
+              } 
+            });
             console.log('📝 Usuario registrado en el servidor');
           }
         });
@@ -68,8 +74,19 @@ export class NotificationServerService {
 
       this.socket.onmessage = (event) => {
         try {
-          const notification: ServerNotification = JSON.parse(event.data);
-          console.log('📬 Notificación recibida:', notification);
+          const data = JSON.parse(event.data);
+          console.log('📬 Notificación recibida:', data);
+          
+          // Crear notificación con estructura estándar
+          const notification: ServerNotification = {
+            id: Date.now().toString(),
+            type: data.type || 'info',
+            title: data.title || 'Notificación',
+            message: data.message || '',
+            data: data,
+            timestamp: Date.now()
+          };
+          
           this.notificationSubject.next(notification);
         } catch (error) {
           console.error('Error al parsear notificación:', error);

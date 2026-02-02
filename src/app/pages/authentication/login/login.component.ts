@@ -109,12 +109,13 @@ export class LoginComponent implements OnInit {
         
         this.alert.success('¡Bienvenido!', 'Inicio de sesión exitoso');
         
+        // FCM deshabilitado temporalmente - Solo se usa push del servidor backend
         // Esperar un momento para que Firebase Auth se inicialice completamente
-        setTimeout(() => {
-          this.notificationService.requestPermissionAndSaveToken().catch(err => {
-            console.log('Notificaciones no disponibles:', err.message);
-          });
-        }, 1000);
+        // setTimeout(() => {
+        //   this.notificationService.requestPermissionAndSaveToken().catch(err => {
+        //     console.log('Notificaciones no disponibles:', err.message);
+        //   });
+        // }, 1000);
       } catch (error: any) {
         this.loading = false;
         

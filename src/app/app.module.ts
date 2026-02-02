@@ -8,6 +8,9 @@ import { LayoutModule } from './layout/layout.module';
 import { PendingInterceptorModule } from '../@fury/shared/loading-indicator/pending-interceptor.module';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldDefaultOptions } from '@angular/material/form-field';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { environment } from '../environments/environment';
 // 🔥 AngularFire imports
@@ -18,6 +21,7 @@ import { provideMessaging, getMessaging } from '@angular/fire/messaging';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { UserRepository } from './domain/repositories/user.repository';
 import { FirebaseUserRepository } from './infrastructure/repositories/firebase-user.repository';
+import { PushNotificationModalComponent } from './shared/components/push-notification-modal/push-notification-modal.component';
 
 @NgModule({
   imports: [
@@ -35,6 +39,11 @@ import { FirebaseUserRepository } from './infrastructure/repositories/firebase-u
     // Displays Loading Bar when a Route Request or HTTP Request is pending
     PendingInterceptorModule,
 
+    // Material Modules for Modal
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+
     // Register a Service Worker (optional)
     // ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     // 🔥 Firebase config
@@ -44,7 +53,7 @@ import { FirebaseUserRepository } from './infrastructure/repositories/firebase-u
     provideMessaging(() => getMessaging()),
     provideStorage(() => getStorage())
   ],
-  declarations: [AppComponent],
+  declarations: [AppComponent, PushNotificationModalComponent],
   bootstrap: [AppComponent],
   providers: [
     {

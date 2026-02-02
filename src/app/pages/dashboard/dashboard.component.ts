@@ -17,6 +17,7 @@ import { User } from '../../domain/models/user.model';
 import { UserService } from '../../application/services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { MessagingService } from '../../services/messaging.service';
+import { NotificationServerService } from '../../core/services/notification-server.service';
 
 @Component({
   selector: 'fury-dashboard',
@@ -111,7 +112,8 @@ export class DashboardComponent implements OnInit {
               private router: Router,
               private userService: UserService,
               private authService: AuthService,
-              private messagingService: MessagingService) {          
+              private messagingService: MessagingService,
+              private notificationServerService: NotificationServerService) {          
     /**
      * Edge wrong drawing fix
      * Navigate anywhere and on Promise right back
@@ -137,6 +139,7 @@ export class DashboardComponent implements OnInit {
    */
   ngOnInit() {
 
+    // FCM deshabilitado temporalmente - Solo se usa push del servidor backend
     // FCM ya se inicializa en el login, no es necesario hacerlo aquí
     // this.initializeFCM();
 
@@ -256,15 +259,16 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  private async initializeFCM() {
-    const token = await this.messagingService.requestPermission();
-    if (token) {
-      console.log('FCM Token obtenido:', token);
-      // Guardar token en Firestore
-      await this.authService.saveFCMToken(token);
-    }
-    this.messagingService.listenForMessages();
-  }
+  // FCM deshabilitado temporalmente - Solo se usa push del servidor backend
+  // private async initializeFCM() {
+  //   const token = await this.messagingService.requestPermission();
+  //   if (token) {
+  //     console.log('FCM Token obtenido:', token);
+  //     // Guardar token en Firestore
+  //     await this.authService.saveFCMToken(token);
+  //   }
+  //   this.messagingService.listenForMessages();
+  // }
 
   testNotification() {
     console.log('Testing notification...');
@@ -302,6 +306,24 @@ export class DashboardComponent implements OnInit {
         console.log('New permission result:', permission);
       });
     }
+  }
+
+  testPushNotification() {
+    if (!this.notificationServerService.isConnected()) {
+      console.error('❌ WebSocket no está conectado');
+      alert('WebSocket no está conectado. Por favor, verifica la conexión.');
+      return;
+    }
+
+    this.notificationServerService.send({
+      type: 'general_announcement',
+      announcement: {
+        subject: 'Promo',
+        content: 'SUPER BET!'
+      }
+    });
+    
+    console.log('✅ Mensaje de prueba enviado al servidor push');
   }
 
 }
