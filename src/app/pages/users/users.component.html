@@ -6,7 +6,10 @@
   <fury-page-layout-content [@fadeInUp]>
     <fury-list name="Usuarios" [columns]="columns" (filterChange)="onFilterChange($event)">
       <div class="actions">
-        <button class="create" (click)="createUser()" type="button" mat-mini-fab color="primary">
+        <button class="refresh" (click)="loadUsers()" type="button" mat-mini-fab color="accent" matTooltip="Refrescar listado">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button class="create" (click)="createUser()" type="button" mat-mini-fab color="primary" matTooltip="Crear usuario">
           <mat-icon>add</mat-icon>
         </button>
       </div>

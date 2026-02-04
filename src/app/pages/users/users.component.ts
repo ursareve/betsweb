@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ListColumn } from '../../../@fury/shared/list/list-column.model';
 import { UserCreateUpdateComponent } from './user-create-update/user-create-update.component';
 import { User } from '../../models/user.model';
-import { UserService } from '../../core/services/user.service';
+import { UserService, UserWithOnlineStatus } from '../../core/services/user.service';
 import { fadeInRightAnimation } from '../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../@fury/animations/fade-in-up.animation';
 import { SweetAlertService } from '../../services/sweet-alert.service';
@@ -34,7 +34,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     { name: 'Acciones', property: 'actions', visible: true },
   ] as ListColumn[];
   pageSize = 10;
-  dataSource: MatTableDataSource<User> | null;
+  dataSource: MatTableDataSource<UserWithOnlineStatus> | null;
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -51,7 +51,19 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource();
-    this.loadUsers();
+    
+    // Suscribirse al observable para recibir actualizaciones
+    this.userService.users$.subscribe(
+      users => {
+        if (users.length > 0) {
+          console.log('Usuarios actualizados:', users);
+          this.dataSource.data = users;
+        }
+      }
+    );
+    
+    // Cargar usuarios (usará caché si existe, sino hará HTTP)
+    this.userService.loadUsers().subscribe();
   }
 
   ngAfterViewInit() {
@@ -60,9 +72,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   loadUsers() {
-    this.userService.getAllUsers().subscribe(
+    this.userService.refreshUsers().subscribe(
       users => {
-        console.log('Usuarios cargados:', users);
+        console.log('Usuarios recargados:', users);
         this.dataSource.data = users;
       },
       error => {
@@ -149,7 +161,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return active ? 'Activo' : 'Inactivo';
   }
 
-  getAvatarUrl(user: User): string {
+  getAvatarUrl(user: UserWithOnlineStatus): string {
     return user.avatarUrl || `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=random`;
   }
 

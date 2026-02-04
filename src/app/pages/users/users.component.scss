@@ -2,6 +2,15 @@
   display: block;
 }
 
+.actions {
+  display: flex;
+  gap: 8px;
+  
+  .refresh {
+    margin-right: 8px;
+  }
+}
+
 .active-chip {
   background-color: #4caf50 !important;
   color: white !important;

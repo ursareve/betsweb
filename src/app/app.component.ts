@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import { Component, Inject, Renderer2, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,6 +13,8 @@ import { NotificationServerService } from './core/services/notification-server.s
 import { SweetAlertService } from './services/sweet-alert.service';
 import { Subscription } from 'rxjs';
 import { PushNotificationModalComponent } from './shared/components/push-notification-modal/push-notification-modal.component';
+import { UserService } from './core/services/user.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'betsweb-root',
@@ -36,7 +37,8 @@ export class AppComponent implements OnDestroy {
               private authService: AuthService,
               private notificationServer: NotificationServerService,
               private alert: SweetAlertService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private userService: UserService) {
     this.authService.user$.subscribe(async (firebaseUser) => {
       if (firebaseUser) {
         const userDoc = await this.authService.getUserData(firebaseUser.uid);
@@ -313,6 +315,9 @@ export class AppComponent implements OnDestroy {
         this.notificationServer.connect();
         this.setupNotificationListener();
         this.startTokenValidation();
+        
+        // Cargar usuarios una vez al iniciar
+        this.userService.loadUsers().subscribe();
       } else {
         this.notificationServer.disconnect();
         this.stopTokenValidation();
@@ -329,11 +334,11 @@ export class AppComponent implements OnDestroy {
         switch (notification.type) {
           case 'general_announcement':
             // Anuncio general para todos los usuarios
-            if (notification.data?.announcement) {
+            if (notification.data?.subject && notification.data?.content) {
               this.dialog.open(PushNotificationModalComponent, {
                 data: {
-                  subject: notification.data.announcement.subject,
-                  content: notification.data.announcement.content,
+                  subject: notification.data.subject,
+                  content: notification.data.content,
                   type: notification.type
                 },
                 panelClass: 'push-notification-dialog',
@@ -375,7 +380,27 @@ export class AppComponent implements OnDestroy {
             break;
 
           case 'info':
-            this.alert.toast('info', notification.message);
+            // Modal para notificaciones informativas
+            if (notification.data?.subject && notification.data?.content) {
+              this.dialog.open(PushNotificationModalComponent, {
+                data: {
+                  subject: notification.data.subject,
+                  content: notification.data.content,
+                  type: notification.type
+                },
+                panelClass: 'push-notification-dialog',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'push-notification-backdrop'
+              });
+            } else {
+              this.alert.toast('info', notification.message);
+            }
+            break;
+
+          case 'chat_message':
+            // Los mensajes de chat se manejan en el ChatService
+            // No mostrar notificación aquí
             break;
 
           default:

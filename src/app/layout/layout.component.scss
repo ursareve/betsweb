@@ -21,3 +21,29 @@
     }
   }
 }
+
+.chat-fab {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  z-index: 1000;
+}
+
+.chat-panel {
+  position: fixed;
+  bottom: 130px;
+  right: 16px;
+  width: 420px;
+  height: 550px;
+  max-height: calc(100vh - 150px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 999;
+  transform: translateY(calc(100% + 130px));
+  transition: transform 0.3s ease-in-out;
+
+  &.open {
+    transform: translateY(0);
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, HostBinding, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, HostListener, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -26,6 +26,8 @@ export class SidenavComponent implements OnInit, OnDestroy {
   @Input()
   @HostBinding('class.expanded')
   expanded: boolean;
+
+  @Output() openConfig = new EventEmitter();
 
   items$: Observable<SidenavItem[]>;
 
@@ -90,5 +92,13 @@ export class SidenavComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
+  }
+
+  isSuperAdmin(): boolean {
+    return this.currentUser?.role === 'superadmin';
+  }
+
+  onOpenConfig() {
+    this.openConfig.emit();
   }
 }

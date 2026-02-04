@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SidebarDirective } from '../../@fury/shared/sidebar/sidebar.directive';
 import { SidenavService } from './sidenav/sidenav.service';
+import { ChatSidenavService } from './chat-sidenav/chat-sidenav.service';
 import { filter, map, startWith } from 'rxjs/operators';
 import { ThemeService } from '../../@fury/services/theme.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -20,6 +21,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   sidenavCollapsed$ = this.sidenavService.collapsed$;
   sidenavExpanded$ = this.sidenavService.expanded$;
   quickPanelOpen: boolean;
+  chatOpen: boolean = false;
 
   sideNavigation$ = this.themeService.config$.pipe(map(config => config.navigation === 'side'));
   topNavigation$ = this.themeService.config$.pipe(map(config => config.navigation === 'top'));
@@ -36,9 +38,15 @@ export class LayoutComponent implements OnInit, OnDestroy {
   constructor(private sidenavService: SidenavService,
               private themeService: ThemeService,
               private route: ActivatedRoute,
-              private router: Router) {}
+              private router: Router,
+              private chatSidenavService: ChatSidenavService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Suscribirse al servicio de chat para sincronizar el estado
+    this.chatSidenavService.open$.subscribe(isOpen => {
+      this.chatOpen = isOpen;
+    });
+  }
 
   openQuickPanel() {
     this.quickPanelOpen = true;
@@ -54,6 +62,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   openSidenav() {
     this.sidenavService.open();
+  }
+
+  toggleChat() {
+    this.chatSidenavService.toggle();
   }
 
   ngOnDestroy(): void {}

@@ -1,6 +1,16 @@
 <fury-loading-indicator></fury-loading-indicator>
 <fury-backdrop #backdrop="furyBackdrop"></fury-backdrop>
-<fury-config-panel-toggle (openConfig)="openConfigPanel()"></fury-config-panel-toggle>
+<!-- Config panel toggle movido al sidenav -->
+
+<!-- Botón flotante de chat -->
+<button (click)="toggleChat()" class="chat-fab" mat-mini-fab color="primary">
+  <mat-icon>chat</mat-icon>
+</button>
+
+<!-- Panel de chat flotante -->
+<div class="chat-panel" [class.open]="chatOpen">
+  <fury-chat-sidenav></fury-chat-sidenav>
+</div>
 
 <!-- QUICKPANEL -->
 <fury-sidebar #configPanel="furySidebar" [backdrop]="backdrop" [invisibleBackdrop]="true" position="right">
@@ -22,7 +32,7 @@
                  [opened]="sidenavOpen$ | async"
                  *ngIf="sideNavigation$ | async"
                  class="fury-collapsable-sidenav">
-      <fury-sidenav [collapsed]="sidenavCollapsed$ | async" [expanded]="sidenavExpanded$ | async"></fury-sidenav>
+      <fury-sidenav [collapsed]="sidenavCollapsed$ | async" [expanded]="sidenavExpanded$ | async" (openConfig)="openConfigPanel()"></fury-sidenav>
     </mat-sidenav>
     <!-- END SIDENAV -->
 

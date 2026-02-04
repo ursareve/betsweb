@@ -1,10 +1,11 @@
 <div class="sidenav" fxLayout="column">
   <div class="sidenav-toolbar" fxLayout="row" fxLayoutAlign="start center">
-    <div class="sidenav-toolbar-icon">
+    <div class="sidenav-toolbar-icon" [class.hidden]="collapsed && !expanded">
       <img src="assets/icons/icon-white.png" alt="icon">
     </div>
-    <div [routerLink]="['/']" class="sidenav-toolbar-logo">
-      <span class="logo-text">BetsKing</span>
+    <div [routerLink]="['/']" class="sidenav-toolbar-logo" [class.centered]="collapsed && !expanded">
+      <span class="logo-text" *ngIf="!collapsed || expanded">BetsKing</span>
+      <span class="logo-text-short" *ngIf="collapsed && !expanded">BK</span>
     </div>
 
 
@@ -12,8 +13,8 @@
 
     <div fxFlexAlign="center" fxHide fxShow.gt-md>
       <button (click)="toggleCollapsed()" class="sidenav-toolbar-collapse-toggle" mat-icon-button>
-        <mat-icon *ngIf="!collapsed" class="sidenav-toolbar-collapse-icon">radio_button_checked</mat-icon>
-        <mat-icon *ngIf="collapsed" class="sidenav-toolbar-collapse-icon">radio_button_unchecked</mat-icon>
+        <mat-icon *ngIf="!collapsed">chevron_left</mat-icon>
+        <mat-icon *ngIf="collapsed">chevron_right</mat-icon>
       </button>
     </div>
   </div>
@@ -39,5 +40,12 @@
 
     <fury-sidenav-item *ngFor="let item of items$ | async" [item]="item" [level]="0"></fury-sidenav-item>
   </fury-scrollbar>
+
+  <div *ngIf="isSuperAdmin()" class="sidenav-config-button">
+    <button (click)="onOpenConfig()" [class.collapsed]="collapsed && !expanded" mat-button fxLayout="row" fxLayoutAlign="start center">
+      <mat-icon>settings</mat-icon>
+      <span *ngIf="!collapsed || expanded" class="sidenav-config-text">Configuración</span>
+    </button>
+  </div>
 
 </div>

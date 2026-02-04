@@ -13,6 +13,7 @@ import { ConfigPanelModule } from './config-panel/config-panel.module';
 import { FurySharedModule } from '../../@fury/fury-shared.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { CoreModule } from '../core/core.module';
+import { ChatSidenavModule } from './chat-sidenav/chat-sidenav.module';
 
 @NgModule({
   imports: [
@@ -30,7 +31,8 @@ import { CoreModule } from '../core/core.module';
     FooterModule,
     BackdropModule,
     ConfigPanelModule,
-    NavigationModule
+    NavigationModule,
+    ChatSidenavModule
   ],
   declarations: [LayoutComponent]
 })

@@ -469,7 +469,7 @@ export class SurebetComponent implements OnInit, OnDestroy {
         hasChanges = true;
         this.newBetIds.add(newBet.id);
         setTimeout(() => this.newBetIds.delete(newBet.id), 2000);
-        console.log('Nuevo bet agregado:', newBet.id);
+        // console.log('Nuevo bet agregado:', newBet.id);
       } else {
         // Verificar si cambió koef o margin
         const koefChanged = 

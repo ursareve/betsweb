@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
+import { ChatService } from './chat.service';
 
 export interface ServerNotification {
   id: string;
@@ -14,11 +15,7 @@ export interface ServerNotification {
 
 export interface OnlineUsersData {
   count: number;
-  users: Array<{
-    localId: string;
-    role: string;
-    connectedAt?: number;
-  }>;
+  users: string[];
 }
 
 @Injectable({
@@ -32,8 +29,9 @@ export class NotificationServerService {
   private maxReconnectAttempts = environment.notificationServer.reconnectAttempts;
   private reconnectDelay = environment.notificationServer.reconnectDelay;
   private isManualDisconnect = false;
+  private onlineUsersInterval: any = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private chatService: ChatService) {}
 
   get notifications$(): Observable<ServerNotification> {
     return this.notificationSubject.asObservable();
@@ -84,6 +82,12 @@ export class NotificationServerService {
             console.log('📤 Enviando registro al servidor push:', registerMessage);
             this.send(registerMessage);
             console.log('📝 Usuario registrado en el servidor');
+            
+            // Solicitar usuarios online inmediatamente
+            this.requestOnlineUsers();
+            
+            // Solicitar usuarios online cada minuto
+            this.startOnlineUsersPolling();
           }
         });
       };
@@ -95,26 +99,46 @@ export class NotificationServerService {
           
           // Si es respuesta de usuarios online
           if (data.type === 'online_users') {
+            const userIds = data.content || [];
             console.log('👥 Usuarios online recibidos:', {
-              count: data.count,
-              users: data.users,
-              fullData: data
+              count: userIds.length,
+              users: userIds
             });
             this.onlineUsersSubject.next({
-              count: data.count || 0,
-              users: data.users || []
+              count: userIds.length,
+              users: userIds
             });
+            return;
+          }
+          
+          // Si es mensaje de chat
+          if (data.type === 'chat_message') {
+            console.log('💬 Mensaje de chat recibido:', data);
+            const currentUser = this.authService.getCurrentUser();
+            if (currentUser && data.from) {
+              this.chatService.addMessage(data.from, currentUser.uid, data.content, false);
+            }
+            // Aún emitir como notificación para que otros componentes puedan reaccionar
+            const notification: ServerNotification = {
+              id: data.id || Date.now().toString(),
+              type: data.type,
+              title: 'Nuevo mensaje',
+              message: data.content || '',
+              data: data,
+              timestamp: data.timestamp || Date.now()
+            };
+            this.notificationSubject.next(notification);
             return;
           }
           
           // Crear notificación con estructura estándar
           const notification: ServerNotification = {
-            id: Date.now().toString(),
+            id: data.id || Date.now().toString(),
             type: data.type || 'info',
             title: data.title || 'Notificación',
             message: data.message || '',
             data: data,
-            timestamp: Date.now()
+            timestamp: data.timestamp || Date.now()
           };
           
           this.notificationSubject.next(notification);
@@ -161,6 +185,7 @@ export class NotificationServerService {
 
   disconnect(): void {
     this.isManualDisconnect = true;
+    this.stopOnlineUsersPolling();
     if (this.socket) {
       this.socket.close();
       this.socket = null;
@@ -174,5 +199,19 @@ export class NotificationServerService {
   requestOnlineUsers(): void {
     console.log('📤 Solicitando usuarios online al servidor push...');
     this.send({ type: 'online_users' });
+  }
+
+  private startOnlineUsersPolling(): void {
+    this.stopOnlineUsersPolling();
+    this.onlineUsersInterval = setInterval(() => {
+      this.requestOnlineUsers();
+    }, 60000); // 1 minuto
+  }
+
+  private stopOnlineUsersPolling(): void {
+    if (this.onlineUsersInterval) {
+      clearInterval(this.onlineUsersInterval);
+      this.onlineUsersInterval = null;
+    }
   }
 }
