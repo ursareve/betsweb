@@ -27,15 +27,32 @@
   bottom: 80px;
   right: 16px;
   z-index: 1000;
+  
+  .chat-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .chat-panel {
   position: fixed;
   bottom: 130px;
   right: 16px;
-  width: 420px;
-  height: 550px;
-  max-height: calc(100vh - 150px);
+  width: min(420px, calc(100vw - 32px));
+  height: min(550px, calc(100vh - 150px));
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   border-radius: 8px;
   overflow: hidden;
@@ -45,5 +62,12 @@
 
   &.open {
     transform: translateY(0);
+  }
+  
+  @media (max-width: 768px) {
+    right: 8px;
+    width: calc(100vw - 16px);
+    height: calc(100vh - 140px);
+    bottom: 120px;
   }
 }

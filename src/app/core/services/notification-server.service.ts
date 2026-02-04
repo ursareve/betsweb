@@ -97,6 +97,20 @@ export class NotificationServerService {
           const data = JSON.parse(event.data);
           console.log('📬 Notificación recibida:', data);
           
+          // Si es un mensaje de error del servidor
+          if (data.error) {
+            const notification: ServerNotification = {
+              id: Date.now().toString(),
+              type: 'error',
+              title: 'Error',
+              message: data.error,
+              data: data,
+              timestamp: Date.now()
+            };
+            this.notificationSubject.next(notification);
+            return;
+          }
+          
           // Si es respuesta de usuarios online
           if (data.type === 'online_users') {
             const userIds = data.content || [];

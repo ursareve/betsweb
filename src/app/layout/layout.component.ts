@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SidebarDirective } from '../../@fury/shared/sidebar/sidebar.directive';
 import { SidenavService } from './sidenav/sidenav.service';
 import { ChatSidenavService } from './chat-sidenav/chat-sidenav.service';
+import { ChatService } from '../core/services/chat.service';
 import { filter, map, startWith } from 'rxjs/operators';
 import { ThemeService } from '../../@fury/services/theme.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -22,6 +23,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   sidenavExpanded$ = this.sidenavService.expanded$;
   quickPanelOpen: boolean;
   chatOpen: boolean = false;
+  totalUnreadMessages: number = 0;
 
   sideNavigation$ = this.themeService.config$.pipe(map(config => config.navigation === 'side'));
   topNavigation$ = this.themeService.config$.pipe(map(config => config.navigation === 'top'));
@@ -39,12 +41,18 @@ export class LayoutComponent implements OnInit, OnDestroy {
               private themeService: ThemeService,
               private route: ActivatedRoute,
               private router: Router,
-              private chatSidenavService: ChatSidenavService) {}
+              private chatSidenavService: ChatSidenavService,
+              private chatService: ChatService) {}
 
   ngOnInit() {
     // Suscribirse al servicio de chat para sincronizar el estado
     this.chatSidenavService.open$.subscribe(isOpen => {
       this.chatOpen = isOpen;
+    });
+    
+    // Suscribirse a cambios en conversaciones para actualizar contador
+    this.chatService.conversations$.subscribe(() => {
+      this.totalUnreadMessages = this.chatService.getTotalUnreadCount();
     });
   }
 

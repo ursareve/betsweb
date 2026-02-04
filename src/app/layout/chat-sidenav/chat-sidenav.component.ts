@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { ScrollbarComponent } from '../../../@fury/shared/scrollbar/scrollbar.component';
 import { ChatSidenavService } from './chat-sidenav.service';
@@ -7,6 +7,7 @@ import { ChatService, ChatMessage } from '../../core/services/chat.service';
 import { NotificationServerService } from '../../core/services/notification-server.service';
 import { AuthService } from '../../services/auth.service';
 import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'fury-chat-sidenav',
@@ -43,21 +44,28 @@ export class ChatSidenavComponent implements OnInit, OnDestroy, AfterViewChecked
     private userService: UserService,
     private chatService: ChatService,
     private notificationServer: NotificationServerService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.replyCtrl = new UntypedFormControl();
-    this.users$ = this.userService.users$;
     
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       this.currentUserId = currentUser.uid;
       
+      // Filtrar usuarios para excluir al usuario actual
+      this.users$ = this.userService.users$.pipe(
+        map(users => users.filter(u => u.uid !== this.currentUserId))
+      );
+      
       // Obtener datos completos del usuario actual
       this.userService.users$.subscribe(users => {
         this.currentUser = users.find(u => u.uid === this.currentUserId) || null;
       });
+    } else {
+      this.users$ = this.userService.users$;
     }
     
     // Suscribirse a cambios en conversaciones
@@ -100,6 +108,11 @@ export class ChatSidenavComponent implements OnInit, OnDestroy, AfterViewChecked
     this.showEmojiPicker = false;
   }
 
+  getUnreadCount(userId: string): number {
+    const conversation = this.chatService.getConversation(userId);
+    return conversation ? conversation.unreadCount : 0;
+  }
+
   selectUser(user: UserWithOnlineStatus) {
     this.activeChat = user;
     this.showContacts = false;
@@ -109,7 +122,8 @@ export class ChatSidenavComponent implements OnInit, OnDestroy, AfterViewChecked
 
   loadMessages(userId: string) {
     this.messages = this.chatService.getMessages(userId);
-    this.shouldScrollToBottom = true;
+    this.cdr.detectChanges();
+    setTimeout(() => this.scrollToBottom(), 0);
   }
 
   send() {
@@ -128,16 +142,21 @@ export class ChatSidenavComponent implements OnInit, OnDestroy, AfterViewChecked
       });
       
       this.replyCtrl.reset();
-      this.shouldScrollToBottom = true;
+      this.cdr.detectChanges();
+      setTimeout(() => this.scrollToBottom(), 0);
     }
   }
 
   private scrollToBottom() {
     if (this.messagesScroll?.scrollbarRef) {
-      setTimeout(() => {
+      try {
         const scrollElement = this.messagesScroll.scrollbarRef.getScrollElement();
-        scrollElement.scrollTo(0, scrollElement.scrollHeight);
-      }, 10);
+        if (scrollElement) {
+          scrollElement.scrollTop = scrollElement.scrollHeight;
+        }
+      } catch (error) {
+        console.error('Error al hacer scroll:', error);
+      }
     }
   }
 

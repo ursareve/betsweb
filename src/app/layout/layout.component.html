@@ -5,6 +5,7 @@
 <!-- Botón flotante de chat -->
 <button (click)="toggleChat()" class="chat-fab" mat-mini-fab color="primary">
   <mat-icon>chat</mat-icon>
+  <span class="chat-badge" *ngIf="totalUnreadMessages > 0">{{ totalUnreadMessages }}</span>
 </button>
 
 <!-- Panel de chat flotante -->

@@ -10,6 +10,7 @@
            matTooltipPosition="right">
         <img [src]="getAvatarUrl(user)" [alt]="user.firstName">
         <span class="online-indicator" *ngIf="user.online"></span>
+        <span class="unread-badge" *ngIf="getUnreadCount(user.uid) > 0">{{ getUnreadCount(user.uid) }}</span>
       </div>
     </div>
     <div class="avatars-actions">
@@ -46,6 +47,7 @@
           <h4 class="contact-name">{{ user.firstName }} {{ user.lastName }}</h4>
           <p class="contact-role">{{ user.role | titlecase }}</p>
         </div>
+        <span class="unread-count" *ngIf="getUnreadCount(user.uid) > 0">{{ getUnreadCount(user.uid) }}</span>
       </div>
     </div>
   </div>

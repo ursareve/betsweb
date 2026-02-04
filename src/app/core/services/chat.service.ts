@@ -72,4 +72,12 @@ export class ChatService {
     const conversation = this.getConversation(userId);
     return conversation ? conversation.messages : [];
   }
+
+  getTotalUnreadCount(): number {
+    let total = 0;
+    this.conversationsSubject.value.forEach(conversation => {
+      total += conversation.unreadCount;
+    });
+    return total;
+  }
 }
