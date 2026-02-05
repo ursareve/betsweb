@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { getBookmakerIcon } from '../../../core/constants/bookmakers';
+import * as moment from 'moment';
 
 @Component({
   selector: 'fury-calculator',
@@ -186,5 +187,25 @@ export class CalculatorComponent {
     this.winwin = { ...this.originalWinwin };
     this.maxOver = { ...this.originalMaxOver };
     this.maxUnder = { ...this.originalMaxUnder };
+  }
+
+  goToBookmaker1(): void {
+    if (this.data.bookmaker_1?.link) {
+      window.open(this.data.bookmaker_1.link, '_blank');
+    }
+  }
+
+  goToBookmaker2(): void {
+    if (this.data.bookmaker_2?.link) {
+      window.open(this.data.bookmaker_2.link, '_blank');
+    }
+  }
+
+  formatDate(timestamp: number): string {
+    return moment.unix(timestamp).format('DD/MM/YYYY');
+  }
+
+  formatTime(timestamp: number): string {
+    return moment.unix(timestamp).format('HH:mm');
   }
 }

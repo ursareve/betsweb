@@ -14,6 +14,7 @@ import { ToolbarSearchComponent } from './toolbar-search/toolbar-search.componen
 import { ToolbarSidenavMobileToggleComponent } from './toolbar-sidenav-mobile-toggle/toolbar-sidenav-mobile-toggle.component';
 import { ToolbarUserComponent } from './toolbar-user/toolbar-user.component';
 import { ToolbarComponent } from './toolbar.component';
+import { ProfileUpdateComponent } from './toolbar-user/profile-update/profile-update.component';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { ToolbarComponent } from './toolbar.component';
     ToolbarSearchBarComponent,
     ToolbarQuickpanelToggleComponent,
     ToolbarFullscreenToggleComponent,
-    ToolbarSidenavMobileToggleComponent
+    ToolbarSidenavMobileToggleComponent,
+    ProfileUpdateComponent
   ],
   exports: [ToolbarComponent]
 })

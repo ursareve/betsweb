@@ -1,0 +1,44 @@
+<div class="notification-modal-overlay">
+  <div class="notification-modal">
+    <!-- Top Header Visual -->
+    <div class="header-line"></div>
+    
+    <!-- Header Label -->
+    <div class="header-label">
+      <h4>NOTIFICATION</h4>
+    </div>
+    
+    <!-- Icon Visual -->
+    <div class="icon-container">
+      <mat-icon>sports_soccer</mat-icon>
+    </div>
+    
+    <!-- Headline Section -->
+    <div class="headline-section">
+      <div class="badge">
+        <span>Live Match Update</span>
+      </div>
+      <h3>{{ data.subject }}</h3>
+    </div>
+    
+    <!-- Body Text -->
+    <div class="body-text">
+      <p>{{ data.content }}</p>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button mat-raised-button class="btn-primary" (click)="onBetNow()">
+        Bet Now
+      </button>
+      <button mat-stroked-button class="btn-secondary" (click)="onDismiss()">
+        Dismiss
+      </button>
+    </div>
+    
+    <!-- Footer indicator -->
+    <div class="footer-indicator">
+      <div class="indicator-bar"></div>
+    </div>
+  </div>
+</div>

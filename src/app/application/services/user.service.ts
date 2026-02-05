@@ -33,4 +33,11 @@ export class UserService {
   deleteUser(id: string): Promise<void> {
     return this.userRepository.delete(id);
   }
+
+  async resetUserSessions(uid: string): Promise<void> {
+    return this.userRepository.update(uid, {
+      activeSessionsCount: 0,
+      hasActiveSession: false
+    });
+  }
 }
