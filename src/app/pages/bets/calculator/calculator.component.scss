@@ -5,9 +5,13 @@
   background-size: cover;
   background-position: center;
   color: #fff;
-  max-width: 950px;
+  max-width: 800px;
   border-radius: 40px;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 }
 
 .close-btn {
@@ -31,6 +35,10 @@
   text-align: center;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 
+  @media (max-width: 768px) {
+    padding: 16px 24px;
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -53,6 +61,11 @@
     letter-spacing: 4px;
     margin-bottom: 8px;
 
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+    }
+
     .live-dot {
       display: none;
     }
@@ -67,6 +80,10 @@
     color: #000;
     line-height: 1.2;
     letter-spacing: -1px;
+
+    @media (max-width: 768px) {
+      font-size: clamp(1.25rem, 5vw, 2rem);
+    }
   }
 
   .match-subtitle {
@@ -78,6 +95,11 @@
     margin: 4px 0 0 0;
     text-transform: uppercase;
     letter-spacing: 2px;
+
+    @media (max-width: 768px) {
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+    }
   }
 
   .match-subtitle2 {
@@ -93,6 +115,10 @@
 
   .match-date{
     font-weight: bolder;
+
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+    }
   }
 }
 
@@ -105,6 +131,11 @@
   padding: 40px 40px 0;
   align-items: start;
   justify-items: end;
+
+  @media (max-width: 768px) {
+    gap: 40px;
+    padding: 30px 20px 0;
+  }
 
   > .bookmaker-card:last-of-type {
     justify-self: start;
@@ -120,6 +151,11 @@
     height: 200px;
     border-radius: 50%;
     background: rgba(26, 35, 50, 1);
+
+    @media (max-width: 768px) {
+      width: 100px;
+      height: 100px;
+    }
   }
 
   .roi-ring {
@@ -140,20 +176,38 @@
     box-shadow: 0 0 30px rgba(195, 152, 38, 0.4);
     animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
+    @media (max-width: 768px) {
+      width: 80px;
+      height: 80px;
+      border-width: 3px;
+    }
+
     .connection-line {
       position: absolute;
       width: 150px;
       height: 2px;
       top: 50%;
 
+      @media (max-width: 768px) {
+        width: 60px;
+      }
+
       &.left {
         left: -170px;
         background: linear-gradient(to right, transparent, white);
+
+        @media (max-width: 768px) {
+          left: -70px;
+        }
       }
 
       &.right {
         right: -170px;
         background: linear-gradient(to left, transparent, white);
+
+        @media (max-width: 768px) {
+          right: -70px;
+        }
       }
     }
 
@@ -164,6 +218,12 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       margin-bottom: 4px;
+
+      @media (max-width: 768px) {
+        font-size: 6px;
+        letter-spacing: 1px;
+        margin-bottom: 2px;
+      }
     }
 
     .roi-value {
@@ -172,6 +232,10 @@
       font-weight: 900;
       line-height: 1;
       margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
     }
 
     .roi-badge {
@@ -191,6 +255,10 @@
         color: rgba(195, 152, 38, 0.7);
         font-size: 10px;
         font-weight: 700;
+
+        @media (max-width: 768px) {
+          font-size: 6px;
+        }
       }
     }
   }
@@ -222,6 +290,11 @@
   max-width: 380px;
   transform: translateY(-20px);
 
+  @media (max-width: 768px) {
+    padding: 50px 16px 16px;
+    max-width: 100%;
+  }
+
   &:hover {
     border-color: rgba(195, 152, 38, 0.5);
     background: #1a2332;
@@ -242,6 +315,13 @@
     justify-content: center;
     overflow: hidden;
     box-shadow: 0 0 15px rgba(195, 152, 38, 0.4);
+
+    @media (max-width: 768px) {
+      width: 50px;
+      height: 50px;
+      top: -25px;
+      border-width: 2px;
+    }
 
     img {
       width: 120%;
@@ -264,6 +344,11 @@
     font-weight: 700;
     color: #fff;
     margin: 0 0 24px 0;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+      margin: 0 0 16px 0;
+    }
   }
 
   .floating-odds {
@@ -281,12 +366,29 @@
     box-shadow: 0 0 15px rgba(140, 227, 50, 0.4);
     z-index: 10;
 
+    @media (max-width: 768px) {
+      width: 32px;
+      height: 32px;
+      top: -10px;
+      border-width: 2px;
+    }
+
+    &.floating-odds-left {
+      @media (max-width: 768px) {
+        left: 8px !important;
+      }
+    }
+
     .odds-value {
       color: #181611;
       font-size: 24px;
       font-weight: 900;
       line-height: 1;
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+
+      @media (max-width: 768px) {
+        font-size: 11px;
+      }
     }
 
     .odds-text {
@@ -317,6 +419,10 @@
         font-size: 16px;
         font-weight: 900;
         text-transform: uppercase;
+
+        @media (max-width: 768px) {
+          font-size: 8px;
+        }
       }
     }
 
@@ -331,6 +437,10 @@
         font-size: 18px;
         font-weight: 900;
         margin: 0;
+
+        @media (max-width: 768px) {
+          font-size: 11px;
+        }
       }
 
       .currency {
@@ -375,10 +485,22 @@
       cursor: pointer;
       transition: all 0.3s;
 
+      @media (max-width: 768px) {
+        font-size: 8px;
+        padding: 4px;
+        gap: 3px;
+      }
+
       mat-icon {
         font-size: 16px;
         width: 16px;
         height: 16px;
+
+        @media (max-width: 768px) {
+          font-size: 10px;
+          width: 10px;
+          height: 10px;
+        }
       }
 
       &:hover {
@@ -391,6 +513,10 @@
   &.right {
     .floating-odds {
       right: 20px;
+
+      @media (max-width: 768px) {
+        right: 8px;
+      }
     }
 
     .stake-input {
@@ -419,6 +545,10 @@
   display: flex;
   justify-content: center;
   padding: 0 40px 24px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px 16px;
+  }
 }
 
 .total-stake-input {
@@ -430,6 +560,14 @@
   gap: 16px;
   min-width: 300px;
 
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
   .stake-label {
     color: rgba(16, 22, 34, 0.6);
     font-size: 18px;
@@ -437,6 +575,10 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     white-space: nowrap;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
   }
 
   .input-wrapper {
@@ -448,11 +590,22 @@
     padding: 8px 16px;
     min-width: 250px;
 
+    @media (max-width: 768px) {
+      padding: 4px 8px;
+      min-width: 0;
+      flex: 1;
+    }
+
     .currency {
       color: #101622;
       font-size: 24px;
       font-weight: 900;
       margin-right: 8px;
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+        margin-right: 4px;
+      }
     }
 
     input {
@@ -466,6 +619,10 @@
       padding: 0;
       text-align: center;
 
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
+
       &::placeholder {
         color: rgba(16, 22, 34, 0.4);
       }
@@ -478,12 +635,21 @@
     gap: 4px;
     min-width: 120px;
 
+    @media (max-width: 768px) {
+      min-width: 0;
+      flex: 1;
+    }
+
     .slider-label {
       color: rgba(16, 22, 34, 0.8);
       font-size: 10px;
       font-weight: 700;
       text-align: center;
       text-transform: uppercase;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
     }
 
     .step-select {
@@ -497,6 +663,11 @@
       cursor: pointer;
       outline: none;
       text-align: center;
+
+      @media (max-width: 768px) {
+        font-size: 10px;
+        padding: 4px 6px;
+      }
 
       &:hover {
         background: #1a2332;
@@ -525,10 +696,22 @@
     min-width: 40px;
     height: 40px;
 
+    @media (max-width: 768px) {
+      min-width: 32px;
+      height: 32px;
+      padding: 4px;
+    }
+
     mat-icon {
       font-size: 20px;
       width: 20px;
       height: 20px;
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
     }
 
     &:hover {
@@ -659,6 +842,11 @@
   gap: 40px;
   padding: 0 40px 40px;
 
+  @media (max-width: 768px) {
+    gap: 16px;
+    padding: 0 12px 16px;
+  }
+
   .info-item {
     display: flex;
     align-items: center;
@@ -667,11 +855,22 @@
     font-size: 14px;
     font-weight: 500;
 
+    @media (max-width: 768px) {
+      gap: 4px;
+      font-size: 8px;
+    }
+
     mat-icon {
       color: #c39826;
       font-size: 18px;
       width: 18px;
       height: 18px;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+        width: 12px;
+        height: 12px;
+      }
     }
   }
 }
@@ -679,29 +878,48 @@
 .profit-grid-vertical {
   display: grid;
   grid-template-columns: auto auto auto;
-  gap: 20px;
+  gap: 12px;
   padding: 0 40px 24px;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    grid-template-columns: auto auto auto;
+    gap: 6px;
+    padding: 0 12px 16px;
+  }
 }
 
 .profit-card-vertical {
   background: rgba(26, 35, 50, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 24px;
+  padding: 12px 8px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 280px;
+  gap: 6px;
+  min-width: 200px;
+
+  @media (max-width: 768px) {
+    padding: 6px 4px;
+    min-width: 0;
+    gap: 4px;
+  }
 
   &.center {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.1);
-    width: 160px;
-    min-width: 160px;
+    width: 120px;
+    min-width: 120px;
+    padding: 12px 6px;
+
+    @media (max-width: 768px) {
+      width: auto;
+      min-width: 0;
+      padding: 6px 3px;
+    }
 
     .badge-row {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: block !important;
 
       &:last-child {
@@ -719,28 +937,36 @@
       justify-content: center;
 
       .badge-label {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
         margin: 0 !important;
+
+        @media (max-width: 768px) {
+          font-size: 0.5rem !important;
+        }
       }
 
       .badge-value {
-        font-size: 10px !important;
+        font-size: 9px !important;
         margin: 0 !important;
+
+        @media (max-width: 768px) {
+          font-size: 7px !important;
+        }
       }
     }
   }
 
   .badge-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: stretch;
 
     .badge-vertical {
-      flex: 0 0 calc(50% - 4px);
+      flex: 0 0 calc(50% - 3px);
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 8px;
-      padding: 8px;
+      padding: 6px 4px;
       text-align: center;
 
       &.badge-winwin {
@@ -776,52 +1002,76 @@
 
       .badge-label {
         color: rgba(255, 255, 255, 0.4);
-        font-size: 9px;
+        font-size: 8px;
         font-weight: 700;
         text-transform: uppercase;
         margin: 0 0 2px 0;
+
+        @media (max-width: 768px) {
+          font-size: 6px;
+          margin: 0;
+        }
       }
 
       .badge-value {
         color: #fff;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         margin: 0;
         line-height: 1;
+
+        @media (max-width: 768px) {
+          font-size: 11px;
+        }
       }
     }
 
     .badge-highlight-vertical {
-      flex: 0 0 calc(50% - 4px);
+      flex: 0 0 calc(50% - 3px);
       background: #8CE332;
       border-radius: 8px;
-      padding: 6px 8px;
+      padding: 6px 4px;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
+
+      @media (max-width: 768px) {
+        padding: 3px 2px;
+        gap: 2px;
+      }
 
       mat-icon {
         color: #181611;
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
         font-weight: 900;
         transform: scale(1.2);
+
+        @media (max-width: 768px) {
+          font-size: 10px;
+          width: 10px;
+          height: 10px;
+        }
       }
 
       .badge-value {
         color: #181611;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 900;
         margin: 0;
         text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+
+        @media (max-width: 768px) {
+          font-size: 10px;
+        }
       }
     }
 
     .badge-highlight-empty {
-      flex: 0 0 calc(50% - 4px);
+      flex: 0 0 calc(50% - 3px);
       visibility: hidden;
     }
   }
@@ -859,17 +1109,29 @@
     overflow: hidden !important;
     background: transparent !important;
     box-shadow: none !important;
-    max-width: 950px !important;
+    max-width: 800px !important;
+
+    @media (max-width: 768px) {
+      max-width: 100% !important;
+    }
   }
 
   .cdk-overlay-pane {
     border-radius: 40px !important;
-    max-width: 950px !important;
+    max-width: 800px !important;
+
+    @media (max-width: 768px) {
+      max-width: 100% !important;
+    }
   }
 
   .mat-mdc-dialog-surface {
     border-radius: 40px !important;
     overflow: hidden !important;
-    max-width: 950px !important;
+    max-width: 800px !important;
+
+    @media (max-width: 768px) {
+      max-width: 100% !important;
+    }
   }
 }

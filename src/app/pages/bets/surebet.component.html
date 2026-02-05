@@ -1,31 +1,31 @@
 <div class="surebet">
   <div class="header elevation"></div>
   
-  <button mat-fab color="primary" class="flash-test-button" (click)="refreshNow()">
+  <button mat-mini-fab color="primary" class="flash-test-button" (click)="refreshNow()">
     <span class="countdown-text">{{ countdown }}</span>
   </button>
   
-  <button mat-fab color="accent" class="toggle-refresh-button" (click)="toggleAutoRefresh()">
+  <button mat-mini-fab color="accent" class="toggle-refresh-button" (click)="toggleAutoRefresh()">
     <mat-icon>{{ isAutoRefreshActive ? 'pause' : 'play_arrow' }}</mat-icon>
   </button>
 
   <div class="events-container">
+    <button mat-raised-button class="filter-button" (click)="openFilter()">
+      <mat-icon>filter_list</mat-icon>
+      Filtrar
+    </button>
     <div class="search-filter-inline">
       <mat-icon>search</mat-icon>
       <input type="text" [(ngModel)]="searchText" placeholder="Buscar evento o liga...">
       <mat-icon class="clear-icon" *ngIf="searchText" (click)="searchText = ''">close</mat-icon>
     </div>
     <div class="profit-filter-inline">
-      <span class="profit-label">Profit: {{ minProfit }}% - {{ maxProfit }}%</span>
+      <span class="profit-label">{{ minProfit }}% - {{ maxProfit }}%</span>
       <mat-slider min="0" max="99" step="1" discrete>
         <input matSliderStartThumb [value]="minProfit" (input)="onProfitRangeChange($event)">
         <input matSliderEndThumb [value]="maxProfit" (input)="onMaxProfitRangeChange($event)">
       </mat-slider>
     </div>
-    <button mat-raised-button class="filter-button" (click)="openFilter()">
-      <mat-icon>filter_list</mat-icon>
-      Filtrar
-    </button>
     <div class="legend-inline">
       <div class="legend-item">
         <img src="/assets/img/bets/shield_gray.png" class="legend-icon">
@@ -61,44 +61,45 @@
           <mat-icon>{{ getSportIcon(bet.event.sport_id) }}</mat-icon>
         </span>
         <div class="event-item-inline-content">
-          <div class="match-league-inline">
-            <span class="match-info-inline">{{ bet.event.name }}</span>
-            <span class="league-inline">{{ bet.event.league }}</span>
-          </div>
-          <div class="date-bet-info-inline">
-            <div class="bet-type-inline">
-              <span>{{ bet.bet.line }} - ( {{ bet.bet.param }} )</span>
-              <span>[ {{ bet.bet.period }} ]</span>
-            </div>
-            <div class="date-time-inline">
-              <mat-icon>schedule</mat-icon>
-              <span>{{ formatDate(bet.event.started_at) }}</span>
-              <span>{{ formatTime(bet.event.started_at) }}</span>
-            </div>
-          </div>
-          <div class="bookmakers-inline">
-            <!-- bookmaker_1 -->
-            <div class="bookmaker-inline">
-              <div class="logo-wrapper-inline">
-                <img [src]="getBookmakerIcon(bet.bookmaker_1.id)" class="bookmaker-logo-inline" alt="{{ bet.bookmaker_1.name }}">
+          <div class="left-content">
+            <div class="event-info-merged">
+              <div class="row-1">
+                <span class="league-inline">{{ bet.event.league }}</span>
+                <span class="date-time-inline">
+                  [ {{ formatDate(bet.event.started_at) }} - {{ formatTime(bet.event.started_at) }} ]
+                </span>
               </div>
-              <div class="bookmaker-info-inline">
-                <span class="bookmaker-name-inline">{{ bet.bookmaker_1.name }}</span>
-                <span class="bookmaker-line-inline">{{ bet.bookmaker_1.line }}</span>
+              <div class="row-2">
+                <span class="match-info-inline">{{ bet.event.name }}</span>
               </div>
-              <span class="bookmaker-odd-inline">{{ bet.bookmaker_1.koef | number:'1.2-2' }}</span>
+              <div class="row-3">
+                <span>{{ bet.bet.line }} - ( {{ bet.bet.param }} ) - [ {{ bet.bet.period }} ]</span>
+              </div>
             </div>
+            <div class="bookmakers-inline">
+              <!-- bookmaker_1 -->
+              <div class="bookmaker-inline">
+                <div class="logo-wrapper-inline">
+                  <img [src]="getBookmakerIcon(bet.bookmaker_1.id)" class="bookmaker-logo-inline" alt="{{ bet.bookmaker_1.name }}">
+                </div>
+                <div class="bookmaker-info-inline">
+                  <span class="bookmaker-name-inline">{{ bet.bookmaker_1.name }}</span>
+                  <span class="bookmaker-line-inline">{{ bet.bookmaker_1.line }}</span>
+                </div>
+                <span class="bookmaker-odd-inline">{{ bet.bookmaker_1.koef | number:'1.2-2' }}</span>
+              </div>
 
-            <!-- bookmaker_2 -->
-            <div class="bookmaker-inline reverse">
-              <div class="logo-wrapper-inline">
-                <img [src]="getBookmakerIcon(bet.bookmaker_2.id)" class="bookmaker-logo-inline" alt="{{ bet.bookmaker_2.name }}">
+              <!-- bookmaker_2 -->
+              <div class="bookmaker-inline reverse">
+                <div class="logo-wrapper-inline">
+                  <img [src]="getBookmakerIcon(bet.bookmaker_2.id)" class="bookmaker-logo-inline" alt="{{ bet.bookmaker_2.name }}">
+                </div>
+                <div class="bookmaker-info-inline">
+                  <span class="bookmaker-name-inline">{{ bet.bookmaker_2.name }}</span>
+                  <span class="bookmaker-line-inline">{{ bet.bookmaker_2.line }}</span>
+                </div>
+                <span class="bookmaker-odd-inline">{{ bet.bookmaker_2.koef | number:'1.2-2' }}</span>
               </div>
-              <div class="bookmaker-info-inline">
-                <span class="bookmaker-name-inline">{{ bet.bookmaker_2.name }}</span>
-                <span class="bookmaker-line-inline">{{ bet.bookmaker_2.line }}</span>
-              </div>
-              <span class="bookmaker-odd-inline">{{ bet.bookmaker_2.koef | number:'1.2-2' }}</span>
             </div>
           </div>
           <span class="profit-inline" [style.background-image]="'url(' + getShieldImage(bet.margin) + ')'">+{{ bet.margin }}%</span>
