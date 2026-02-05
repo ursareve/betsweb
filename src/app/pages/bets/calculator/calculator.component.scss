@@ -47,7 +47,7 @@
     padding: 0;
     background: none;
     border-radius: 0;
-    font-size: 10px;
+    font-size: 1rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 4px;
@@ -73,11 +73,26 @@
     position: relative;
     z-index: 1;
     color: rgba(0, 0, 0, 0.7);
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 0.8rem;
+    font-weight: bold;
     margin: 4px 0 0 0;
     text-transform: uppercase;
     letter-spacing: 2px;
+  }
+
+  .match-subtitle2 {
+    position: relative;
+    z-index: 1;
+    color: rgba(0, 0, 0, 0.7);
+    margin: 4px 0 0 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bolder;
+    font-size: 1.2rem;
+  }
+
+  .match-date{
+    font-weight: bolder;
   }
 }
 

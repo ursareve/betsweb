@@ -264,17 +264,53 @@ $green: #8CE332;
     padding: 0;
     margin-top: 0.5rem;
 
+    .loader-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      gap: 1.5rem;
+
+      mat-spinner {
+        ::ng-deep circle {
+          stroke: $gold;
+        }
+      }
+
+      p {
+        color: white;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0;
+      }
+    }
+
     .event-item-inline {
       height: auto;
       margin-bottom: 32px;
       padding: 12px 16px;
-      padding-left: 5%;
+      padding-left: 7%;
       border-radius: 50px;
       background: $card-bg;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       border: 1px solid rgba($gold, 0.3);
       position: relative;
       overflow: visible;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        border-color: $gold;
+        background: lighten($card-bg, 5%);
+      }
+
+      &:active {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
 
       &.new-item {
         animation: newItemPulse 2s ease-out;
@@ -305,7 +341,7 @@ $green: #8CE332;
 
       .event-item-inline-content {
         display: grid;
-        grid-template-columns: 25% 20% 35% 10% 5%;
+        grid-template-columns: 28% 20% 35% 10%;
         align-items: center;
         gap: 1rem;
         width: 100%;
@@ -414,20 +450,8 @@ $green: #8CE332;
           }
 
           &:hover {
-            background: rgba($gold, 0.9);
+            background: rgba($gold, 0.2);
             border-color: $gold;
-
-            .bookmaker-info-inline {
-              .bookmaker-name-inline,
-              .bet-type-inline {
-                color: $dark-bg;
-              }
-            }
-
-            .bookmaker-odd-inline {
-              background: $dark-bg;
-              color: $gold;
-            }
           }
 
           .logo-wrapper-inline {

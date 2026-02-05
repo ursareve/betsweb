@@ -9,7 +9,9 @@
       {{ data.event.league }}
     </span>
     <h1 class="match-title">{{ data.event.name }}</h1>
-    <p class="match-subtitle">{{ data.bet.market }} • {{ data.bet.period }}</p>
+    <span class="match-date">{{ formatDate(data.event.started_at) }} - {{ formatTime(data.event.started_at) }}</span>
+    <p class="match-subtitle">{{ data.bet.line }} - [ {{ data.bet.period }} ]</p>
+    <!-- <p class="match-subtitle2">( {{ data.bet.param }} )</p> -->
   </div>
 
   <div class="betting-grid">
@@ -18,7 +20,7 @@
       <div class="connection-line left"></div>
       <div class="connection-line right"></div>
       <span class="roi-label">ROI</span>
-      <h2 class="roi-value">+{{ data.bet.param }}%</h2>
+      <h2 class="roi-value">+{{ data.bet.market }}%</h2>
       <div class="roi-badge">
         <mat-icon>bolt</mat-icon>
         <span>SECURED</span>
@@ -35,10 +37,10 @@
           <span class="odds-value">{{ data.bookmaker_1.koef }}</span>
         </div>
         <div class="stake-header">
-          <span class="stake-label">Market</span>
+          <span class="stake-label">Apuesta</span>
         </div>
         <div class="stake-input">
-          <span class="market-title">{{ data.bet.market }} ({{ data.bookmaker_1.line }})</span>
+          <span class="market-title">{{ data.bet.param }} ({{ data.bookmaker_1.line }})</span>
         </div>
         <button class="event-btn" (click)="goToBookmaker1()">
           <mat-icon>open_in_new</mat-icon>
@@ -57,10 +59,10 @@
           <span class="odds-value">{{ data.bookmaker_2.koef }}</span>
         </div>
         <div class="stake-header">
-          <span class="stake-label">Market</span>
+          <span class="stake-label">Apuesta</span>
         </div>
         <div class="stake-input">
-          <span class="market-title">{{ data.bet.market }} ({{ data.bookmaker_2.line }})</span>
+          <span class="market-title">{{ data.bet.param }} ({{ data.bookmaker_2.line }})</span>
         </div>
         <button class="event-btn" (click)="goToBookmaker2()">
           <mat-icon>open_in_new</mat-icon>

@@ -49,7 +49,14 @@
       </div>
     </div>
     <div class="events-list-inline">
-      <div *ngFor="let bet of filteredBets" class="event-item-inline" [class.new-item]="isNewBet(bet.id)">
+      <!-- Loader -->
+      <div *ngIf="isLoading" class="loader-container">
+        <mat-spinner diameter="60"></mat-spinner>
+        <p>Cargando apuestas...</p>
+      </div>
+      
+      <!-- Lista de eventos -->
+      <div *ngFor="let bet of filteredBets" class="event-item-inline" [class.new-item]="isNewBet(bet.id)" (click)="openCalculator(bet)">
         <span class="sport-tag-inline">
           <mat-icon>{{ getSportIcon(bet.event.sport_id) }}</mat-icon>
         </span>
@@ -95,9 +102,6 @@
             </div>
           </div>
           <span class="profit-inline" [style.background-image]="'url(' + getShieldImage(bet.margin) + ')'">+{{ bet.margin }}%</span>
-          <button mat-icon-button class="calculate-button-inline" (click)="openCalculator(bet)">
-            <mat-icon>calculate</mat-icon>
-          </button>
         </div>
       </div>
     </div>
