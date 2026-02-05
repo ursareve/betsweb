@@ -14,6 +14,11 @@
   padding: 12px 0;
   z-index: 11;
 
+  @media (max-width: 768px) {
+    width: 50px;
+    padding: 8px 0;
+  }
+
   .avatars-list {
     flex: 1;
     display: flex;
@@ -23,6 +28,11 @@
     padding: 0 8px;
     overflow-y: auto;
 
+    @media (max-width: 768px) {
+      gap: 8px;
+      padding: 0 5px;
+    }
+
     .avatar-item {
       width: 40px;
       height: 40px;
@@ -31,6 +41,11 @@
       position: relative;
       transition: transform 0.2s;
       border: 2px solid transparent;
+
+      @media (max-width: 768px) {
+        width: 35px;
+        height: 35px;
+      }
 
       &:hover {
         transform: scale(1.1);
@@ -62,6 +77,11 @@
         background: #4ade80;
         border: 2px solid #0f1419;
         border-radius: 50%;
+
+        @media (max-width: 768px) {
+          width: 8px;
+          height: 8px;
+        }
       }
 
       .unread-badge {
@@ -80,6 +100,12 @@
         justify-content: center;
         padding: 0 3px;
         border: 2px solid #0f1419;
+
+        @media (max-width: 768px) {
+          font-size: 8px;
+          min-width: 14px;
+          height: 14px;
+        }
       }
     }
   }
@@ -92,6 +118,11 @@
     gap: 8px;
     border-top: 1px solid #2a3544;
     padding-top: 12px;
+
+    @media (max-width: 768px) {
+      padding: 0 5px;
+      padding-top: 8px;
+    }
 
     button {
       color: #8b9199;
@@ -116,6 +147,12 @@
   margin-left: 60px;
   transition: left 0.3s ease;
 
+  @media (max-width: 768px) {
+    width: 200px;
+    left: -200px;
+    margin-left: 50px;
+  }
+
   &.open {
     left: 0;
   }
@@ -127,11 +164,19 @@
     justify-content: space-between;
     align-items: center;
 
+    @media (max-width: 768px) {
+      padding: 8px 10px;
+    }
+
     h3 {
       color: #f2b90d;
       font-size: 14px;
       font-weight: 500;
       margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+      }
     }
   }
 
@@ -143,9 +188,18 @@
     background: #1a2332;
     border-bottom: 1px solid #2a3544;
 
+    @media (max-width: 768px) {
+      padding: 8px;
+      gap: 6px;
+    }
+
     mat-icon {
       color: #8b9199;
       font-size: 20px;
+
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
     }
 
     input {
@@ -155,6 +209,10 @@
       color: white;
       outline: none;
       font-size: 13px;
+
+      @media (max-width: 768px) {
+        font-size: 11px;
+      }
 
       &::placeholder {
         color: #8b9199;
@@ -175,6 +233,11 @@
       border-bottom: 1px solid #2a3544;
       transition: background 0.2s;
 
+      @media (max-width: 768px) {
+        gap: 8px;
+        padding: 10px 12px;
+      }
+
       &:hover {
         background: #1a2332;
       }
@@ -191,6 +254,11 @@
           width: 40px;
           height: 40px;
           border-radius: 50%;
+
+          @media (max-width: 768px) {
+            width: 35px;
+            height: 35px;
+          }
         }
 
         .online-indicator {
@@ -202,6 +270,11 @@
           background: #4ade80;
           border: 2px solid #151d2a;
           border-radius: 50%;
+
+          @media (max-width: 768px) {
+            width: 8px;
+            height: 8px;
+          }
         }
       }
 
@@ -214,6 +287,11 @@
           font-size: 13px;
           font-weight: 500;
           margin: 0 0 3px 0;
+
+          @media (max-width: 768px) {
+            font-size: 11px;
+            margin: 0 0 2px 0;
+          }
         }
 
         .contact-role {
@@ -223,6 +301,10 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+
+          @media (max-width: 768px) {
+            font-size: 9px;
+          }
         }
       }
 
@@ -238,6 +320,13 @@
         align-items: center;
         justify-content: center;
         padding: 0 6px;
+
+        @media (max-width: 768px) {
+          font-size: 9px;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 4px;
+        }
       }
     }
   }
@@ -258,10 +347,22 @@
       height: 64px;
       margin-bottom: 16px;
       opacity: 0.3;
+
+      @media (max-width: 768px) {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 12px;
+      }
     }
     
     p {
       font-size: 14px;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+        padding: 0 16px;
+      }
     }
   }
 
@@ -272,10 +373,20 @@
     align-items: center;
     gap: 12px;
 
+    @media (max-width: 768px) {
+      padding: 10px 12px;
+      gap: 8px;
+    }
+
     .header-avatar {
       width: 36px;
       height: 36px;
       border-radius: 50%;
+
+      @media (max-width: 768px) {
+        width: 32px;
+        height: 32px;
+      }
     }
 
     .header-info {
@@ -284,11 +395,19 @@
         font-size: 14px;
         font-weight: 500;
         margin: 0 0 2px 0;
+
+        @media (max-width: 768px) {
+          font-size: 12px;
+        }
       }
 
       .status {
         color: #4ade80;
         font-size: 11px;
+
+        @media (max-width: 768px) {
+          font-size: 9px;
+        }
         
         &.offline {
           color: #8b9199;
@@ -304,12 +423,20 @@
     display: flex;
     flex-direction: column;
 
+    @media (max-width: 768px) {
+      padding: 12px 8px;
+    }
+
     .messages {
       display: flex;
       flex-direction: column;
       gap: 12px;
       justify-content: flex-end;
       min-height: 100%;
+
+      @media (max-width: 768px) {
+        gap: 8px;
+      }
       
       .no-messages {
         text-align: center;
@@ -317,6 +444,11 @@
         padding: 32px;
         font-size: 13px;
         margin: auto;
+
+        @media (max-width: 768px) {
+          padding: 16px;
+          font-size: 11px;
+        }
       }
 
       .message {
@@ -325,13 +457,23 @@
         gap: 8px;
         max-width: 75%;
 
+        @media (max-width: 768px) {
+          gap: 6px;
+          max-width: 85%;
+        }
+
         &.me {
           align-self: flex-end;
           flex-direction: row-reverse;
 
           .message-bubble {
-            background: #f2b90d;
-            color: #221e10;
+            background: rgba(242, 185, 13, 0.3);
+            color: #ffffff;
+            border: 1px solid rgba(242, 185, 13, 0.5);
+
+            .message-time {
+              color: rgba(255, 255, 255, 0.8);
+            }
           }
         }
 
@@ -339,6 +481,11 @@
           width: 28px;
           height: 28px;
           border-radius: 50%;
+
+          @media (max-width: 768px) {
+            width: 24px;
+            height: 24px;
+          }
         }
 
         .message-bubble {
@@ -349,14 +496,28 @@
           font-size: 13px;
           line-height: 1.4;
 
+          @media (max-width: 768px) {
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+          }
+
           p {
             margin: 0 0 4px 0;
+
+            @media (max-width: 768px) {
+              margin: 0 0 3px 0;
+            }
           }
           
           .message-time {
             font-size: 10px;
             color: #8b9199;
             display: block;
+
+            @media (max-width: 768px) {
+              font-size: 8px;
+            }
           }
         }
       }
@@ -372,6 +533,11 @@
     background: #1a2332;
     position: relative;
 
+    @media (max-width: 768px) {
+      padding: 8px 10px;
+      gap: 6px;
+    }
+
     input {
       flex: 1;
       background: #2a3544;
@@ -382,6 +548,12 @@
       font-size: 13px;
       outline: none;
 
+      @media (max-width: 768px) {
+        padding: 8px 12px;
+        font-size: 11px;
+        border-radius: 16px;
+      }
+
       &::placeholder {
         color: #8b9199;
       }
@@ -389,6 +561,16 @@
 
     button {
       color: #8b9199;
+
+      @media (max-width: 768px) {
+        padding: 6px;
+        
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
 
       &[color="primary"] {
         color: #f2b90d;
@@ -405,6 +587,13 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       z-index: 100;
       max-width: 320px;
+
+      @media (max-width: 768px) {
+        bottom: 50px;
+        right: 10px;
+        max-width: 280px;
+        padding: 10px;
+      }
       
       .emoji-grid {
         display: grid;
@@ -412,6 +601,12 @@
         gap: 8px;
         max-height: 200px;
         overflow-y: auto;
+
+        @media (max-width: 768px) {
+          grid-template-columns: repeat(8, 1fr);
+          gap: 6px;
+          max-height: 160px;
+        }
         
         .emoji-item {
           font-size: 24px;
@@ -420,6 +615,11 @@
           padding: 4px;
           border-radius: 4px;
           transition: background 0.2s;
+
+          @media (max-width: 768px) {
+            font-size: 20px;
+            padding: 3px;
+          }
           
           &:hover {
             background: #1a2332;

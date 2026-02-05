@@ -66,8 +66,9 @@
   
   @media (max-width: 768px) {
     right: 8px;
+    bottom: 100px;
     width: calc(100vw - 16px);
-    height: calc(100vh - 140px);
-    bottom: 120px;
+    height: calc(100vh - 120px);
+    max-height: 500px;
   }
 }
