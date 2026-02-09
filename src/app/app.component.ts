@@ -305,6 +305,9 @@ export class AppComponent implements OnDestroy {
       this.router.navigate(['/login']);
     }
     
+    // Detectar cierre de navegador/pestaña para hacer logout automático
+    this.setupBeforeUnloadHandler();
+    
     // FCM deshabilitado temporalmente - Solo se usa push del servidor backend
     // Firebase notifications (mantener para uso futuro)
     // this.notificationService.listenForegroundMessages();
@@ -420,6 +423,28 @@ export class AppComponent implements OnDestroy {
     this.notificationSubscription?.unsubscribe();
     this.notificationServer.disconnect();
     this.stopTokenValidation();
+    this.removeBeforeUnloadHandler();
+  }
+
+  private setupBeforeUnloadHandler(): void {
+    // Detectar cierre de navegador/pestaña
+    window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
+  }
+
+  private removeBeforeUnloadHandler(): void {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload.bind(this));
+  }
+
+  private handleBeforeUnload(event: BeforeUnloadEvent): void {
+    // Hacer logout síncrono al cerrar navegador
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      // Usar sendBeacon para enviar datos de forma confiable al cerrar
+      navigator.sendBeacon(
+        '/api/logout',  // Endpoint que debe manejar el decremento
+        JSON.stringify({ uid: user.uid })
+      );
+    }
   }
 
   private startTokenValidation(): void {

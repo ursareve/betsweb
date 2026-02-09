@@ -1028,7 +1028,6 @@
 
     .badge-highlight-vertical {
       flex: 0 0 calc(50% - 3px);
-      background: #8CE332;
       border-radius: 8px;
       padding: 6px 4px;
       text-align: center;
@@ -1042,8 +1041,33 @@
         gap: 2px;
       }
 
+      &.profit-positive {
+        background: #8CE332;
+
+        mat-icon {
+          color: #181611;
+        }
+
+        .badge-value {
+          color: #181611;
+          text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+        }
+      }
+
+      &.profit-negative {
+        background: #ff4444;
+
+        mat-icon {
+          color: #fff;
+        }
+
+        .badge-value {
+          color: #fff;
+          text-shadow: none;
+        }
+      }
+
       mat-icon {
-        color: #181611;
         font-size: 14px;
         width: 14px;
         height: 14px;
@@ -1058,11 +1082,9 @@
       }
 
       .badge-value {
-        color: #181611;
         font-size: 14px;
         font-weight: 900;
         margin: 0;
-        text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 
         @media (max-width: 768px) {
           font-size: 10px;
