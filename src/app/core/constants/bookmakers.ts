@@ -116,7 +116,8 @@ export const BOOKMAKERS = {
   498: { id: 498, name: 'BetssonIt', icon: 'assets/img/bets/bookmakers/498.webp' },
   701: { id: 701, name: 'CodereIt', icon: 'assets/img/bets/bookmakers/701.webp' },
   702: { id: 702, name: 'Totosi', icon: 'assets/img/bets/bookmakers/702.png' },
-  714: { id: 714, name: 'Apuestatotal', icon: 'assets/img/bets/bookmakers/714.jpeg' }
+  714: { id: 714, name: 'Apuestatotal', icon: 'assets/img/bets/bookmakers/714.jpeg' },
+  1474: { id: 1474, name: 'Wplay', icon: 'assets/img/bets/bookmakers/1474.jpg' }
 };
 
 export function getBookmakerIcon(bookmakerId: number): string {

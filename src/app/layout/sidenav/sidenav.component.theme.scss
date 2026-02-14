@@ -54,7 +54,7 @@ fury-sidenav {
       width: $sidenav-collapsed-width;
     }
 
-    .sidenav-toolbar-logo,
+    .sidenav-toolbar-logo .logo-text,
     .sidenav-toolbar-collapse-toggle,
     .sidenav-user-email,
     .sidenav-user-name,
@@ -84,7 +84,7 @@ fury-sidenav {
         transform: scale(1);
       }
 
-      .sidenav-toolbar-logo,
+      .sidenav-toolbar-logo .logo-text,
       .sidenav-toolbar-collapse-toggle,
       .sidenav-user-email,
       .sidenav-user-name,

@@ -1,25 +1,16 @@
 <fury-card class="realtime-users-widget">
   <fury-card-header class="header" fxLayout="column">
-    <fury-card-header-heading>Active Users right now</fury-card-header-heading>
+    <fury-card-header-heading>Usuarios Online</fury-card-header-heading>
 
     <div class="value">{{ currentUsers }}</div>
   </fury-card-header>
 
   <fury-card-content>
     <div class="section">
-      <div class="heading">Page views per minute</div>
+      <div class="heading">Usuarios por minuto</div>
       <div class="canvas-content">
         <canvas #canvas></canvas>
       </div>
-    </div>
-
-    <div class="section">
-      <div class="heading">Top Active Pages</div>
-      <fury-scrollbar class="pages">
-        <div class="page" *ngFor="let page of pages$ | async">
-          {{ page.page }}
-        </div>
-      </fury-scrollbar>
     </div>
   </fury-card-content>
 </fury-card>

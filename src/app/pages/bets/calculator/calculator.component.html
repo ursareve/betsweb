@@ -9,7 +9,9 @@
       {{ data.event.league }}
     </span>
     <h1 class="match-title">{{ data.event.name }}</h1>
-    <p class="match-subtitle">{{ data.bet.market }} • {{ data.bet.period }}</p>
+    <span class="match-date">{{ formatDate(data.event.started_at) }} - {{ formatTime(data.event.started_at) }}</span>
+    <p class="match-subtitle">{{ data.bet.line }} - [ {{ data.bet.period }} ]</p>
+    <!-- <p class="match-subtitle2">( {{ data.bet.param }} )</p> -->
   </div>
 
   <div class="betting-grid">
@@ -18,7 +20,7 @@
       <div class="connection-line left"></div>
       <div class="connection-line right"></div>
       <span class="roi-label">ROI</span>
-      <h2 class="roi-value">+{{ data.bet.param }}%</h2>
+      <h2 class="roi-value">+{{ data.bet.market }}%</h2>
       <div class="roi-badge">
         <mat-icon>bolt</mat-icon>
         <span>SECURED</span>
@@ -31,16 +33,16 @@
       </div>
       
       <div class="stake-box">
-        <div class="floating-odds" style="left: 20px;">
+        <div class="floating-odds floating-odds-left" style="left: 20px;">
           <span class="odds-value">{{ data.bookmaker_1.koef }}</span>
         </div>
         <div class="stake-header">
-          <span class="stake-label">Market</span>
+          <span class="stake-label">Apuesta</span>
         </div>
         <div class="stake-input">
-          <span class="market-title">{{ data.bet.market }} ({{ data.bookmaker_1.line }})</span>
+          <span class="market-title">{{ data.bet.param }} ({{ data.bookmaker_1.line }})</span>
         </div>
-        <button class="event-btn">
+        <button class="event-btn" (click)="goToBookmaker1()">
           <mat-icon>open_in_new</mat-icon>
           <span>IR A EVENTO</span>
         </button>
@@ -57,12 +59,12 @@
           <span class="odds-value">{{ data.bookmaker_2.koef }}</span>
         </div>
         <div class="stake-header">
-          <span class="stake-label">Market</span>
+          <span class="stake-label">Apuesta</span>
         </div>
         <div class="stake-input">
-          <span class="market-title">{{ data.bet.market }} ({{ data.bookmaker_2.line }})</span>
+          <span class="market-title">{{ data.bet.param }} ({{ data.bookmaker_2.line }})</span>
         </div>
-        <button class="event-btn">
+        <button class="event-btn" (click)="goToBookmaker2()">
           <mat-icon>open_in_new</mat-icon>
           <span>IR A EVENTO</span>
         </button>
@@ -70,71 +72,70 @@
     </div>
   </div>
 
-  <div class="total-stake-section">
-    <div class="total-stake-input">
-      <span class="stake-label">Total Stake</span>
-      <div class="input-wrapper">
-        <span class="currency">$</span>
-        <input type="text" [(ngModel)]="totalStake" (input)="calculateOptimalStakes()" placeholder="1000.00">
+  <mat-tab-group [(selectedIndex)]="selectedTab" class="calculator-tabs">
+    <!-- TAB 1: Total Stake -->
+    <mat-tab label="Total Stake">
+      <div class="total-stake-section">
+        <div class="total-stake-input">
+          <span class="stake-label">Total Stake</span>
+          <div class="input-wrapper">
+            <span class="currency">$</span>
+            <input type="text" [(ngModel)]="totalStake" (input)="calculateOptimalStakes()" placeholder="1000.00">
+          </div>
+          <div class="slider-wrapper">
+            <span class="slider-label">Step: ${{ roundingStep | number }}</span>
+            <select [(ngModel)]="roundingStep" class="step-select">
+              <option [value]="1000">$1,000</option>
+              <option [value]="2500">$2,500</option>
+              <option [value]="5000">$5,000</option>
+              <option [value]="10000">$10,000</option>
+              <option [value]="20000">$20,000</option>
+              <option [value]="50000">$50,000</option>
+              <option [value]="100000">$100,000</option>
+            </select>
+          </div>
+          <button class="round-btn" (click)="calculateRoundedOptimalStakes()" matTooltip="Redondear a miles">
+            <mat-icon>calculate</mat-icon>
+          </button>
+          <button class="reset-btn" (click)="resetToOriginal()" matTooltip="Resetear">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class="slider-wrapper">
-        <span class="slider-label">Step: ${{ roundingStep | number }}</span>
-        <select [(ngModel)]="roundingStep" class="step-select">
-          <option [value]="5000">$5,000</option>
-          <option [value]="10000">$10,000</option>
-          <option [value]="20000">$20,000</option>
-          <option [value]="50000">$50,000</option>
-          <option [value]="100000">$100,000</option>
-        </select>
-      </div>
-      <button class="round-btn" (click)="calculateRoundedOptimalStakes()" matTooltip="Redondear a miles">
-        <mat-icon>calculate</mat-icon>
-      </button>
-      <button class="reset-btn" (click)="resetToOriginal()" matTooltip="Resetear">
-        <mat-icon>refresh</mat-icon>
-      </button>
-    </div>
-  </div>
 
-  <div class="profit-grid-vertical">
+      <div class="profit-grid-vertical">
     <div class="profit-card-vertical left">
       <div class="badge-row">
-        <div class="badge-highlight-vertical" *ngIf="winwin.profitUnder !== 0; else emptyHighlight">
-          <mat-icon>arrow_upward</mat-icon>
-          <p class="badge-value">${{ winwin.profitUnder }}</p>
+        <div class="badge-highlight-vertical" 
+             [ngClass]="{'profit-positive': winwin.profitOver > 0, 'profit-negative': winwin.profitOver < 0, 'profit-zero': winwin.profitOver === 0}">
+          <mat-icon>{{ winwin.profitOver > 0 ? 'arrow_upward' : winwin.profitOver < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+          <p class="badge-value">${{ winwin.profitOver }}</p>
         </div>
-        <ng-template #emptyHighlight>
-          <div class="badge-highlight-empty"></div>
-        </ng-template>
         <div class="badge-vertical badge-winwin">
           <p class="badge-label">INVERSION</p>
-          <p class="badge-value">${{ winwin.under }}</p>
+          <p class="badge-value">${{ winwin.over }}</p>
         </div>
       </div>
       <div class="badge-row">
-        <div class="badge-highlight-vertical" *ngIf="maxUnder.profitUnder !== 0; else emptyHighlight2">
-          <mat-icon>arrow_upward</mat-icon>
-          <p class="badge-value">${{ maxUnder.profitUnder }}</p>
+        <div class="badge-highlight-vertical" 
+             [ngClass]="{'profit-positive': maxUnder.profitOver > 0, 'profit-negative': maxUnder.profitOver < 0, 'profit-zero': maxUnder.profitOver === 0}">
+          <mat-icon>{{ maxUnder.profitOver > 0 ? 'arrow_upward' : maxUnder.profitOver < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+          <p class="badge-value">${{ maxUnder.profitOver }}</p>
         </div>
-        <ng-template #emptyHighlight2>
-          <div class="badge-highlight-empty"></div>
-        </ng-template>
         <div class="badge-vertical badge-maxunder">
           <p class="badge-label">INVERSION</p>
-          <p class="badge-value">${{ maxUnder.under }}</p>
+          <p class="badge-value">${{ maxUnder.over }}</p>
         </div>
       </div>
       <div class="badge-row">
-        <div class="badge-highlight-vertical" *ngIf="maxOver.profitUnder !== 0; else emptyHighlight3">
-          <mat-icon>arrow_upward</mat-icon>
-          <p class="badge-value">${{ maxOver.profitUnder }}</p>
+        <div class="badge-highlight-vertical" 
+             [ngClass]="{'profit-positive': maxOver.profitOver > 0, 'profit-negative': maxOver.profitOver < 0, 'profit-zero': maxOver.profitOver === 0}">
+          <mat-icon>{{ maxOver.profitOver > 0 ? 'arrow_upward' : maxOver.profitOver < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+          <p class="badge-value">${{ maxOver.profitOver }}</p>
         </div>
-        <ng-template #emptyHighlight3>
-          <div class="badge-highlight-empty"></div>
-        </ng-template>
         <div class="badge-vertical badge-maxover">
           <p class="badge-label">INVERSION</p>
-          <p class="badge-value">${{ maxOver.under }}</p>
+          <p class="badge-value">${{ maxOver.over }}</p>
         </div>
       </div>
     </div>
@@ -143,19 +144,19 @@
       <div class="badge-row">
         <div class="badge-vertical badge-winwin">
           <p class="badge-label">Win Win</p>
-          <p class="badge-value">${{ winwin.under + winwin.over }}</p>
+          <p class="badge-value">${{ Math.min(winwin.profitOver, winwin.profitUnder).toFixed(1) }}</p>
         </div>
       </div>
       <div class="badge-row">
         <div class="badge-vertical badge-maxunder">
           <p class="badge-label">Max Under</p>
-          <p class="badge-value">${{ maxUnder.under + maxUnder.over }}</p>
+          <p class="badge-value">${{ Math.max(maxUnder.profitOver, maxUnder.profitUnder).toFixed(1) }}</p>
         </div>
       </div>
       <div class="badge-row">
         <div class="badge-vertical badge-maxover">
           <p class="badge-label">Max Over</p>
-          <p class="badge-value">${{ maxOver.under + maxOver.over }}</p>
+          <p class="badge-value">${{ Math.max(maxOver.profitOver, maxOver.profitUnder).toFixed(1) }}</p>
         </div>
       </div>
     </div>
@@ -164,44 +165,176 @@
       <div class="badge-row">
         <div class="badge-vertical badge-winwin">
           <p class="badge-label">INVERSION</p>
-          <p class="badge-value">${{ winwin.over }}</p>
+          <p class="badge-value">${{ winwin.under }}</p>
         </div>
-        <div class="badge-highlight-vertical" *ngIf="winwin.profitOver !== 0; else emptyHighlight4">
-          <mat-icon>arrow_upward</mat-icon>
-          <p class="badge-value">${{ winwin.profitOver }}</p>
+        <div class="badge-highlight-vertical" 
+             [ngClass]="{'profit-positive': winwin.profitUnder > 0, 'profit-negative': winwin.profitUnder < 0, 'profit-zero': winwin.profitUnder === 0}">
+          <mat-icon>{{ winwin.profitUnder > 0 ? 'arrow_upward' : winwin.profitUnder < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+          <p class="badge-value">${{ winwin.profitUnder }}</p>
         </div>
-        <ng-template #emptyHighlight4>
-          <div class="badge-highlight-empty"></div>
-        </ng-template>
       </div>
       <div class="badge-row">
         <div class="badge-vertical badge-maxunder">
           <p class="badge-label">INVERSION</p>
-          <p class="badge-value">${{ maxUnder.over }}</p>
+          <p class="badge-value">${{ maxUnder.under }}</p>
         </div>
-        <div class="badge-highlight-vertical" *ngIf="maxUnder.profitOver !== 0; else emptyHighlight5">
-          <mat-icon>arrow_upward</mat-icon>
-          <p class="badge-value">${{ maxUnder.profitOver }}</p>
+        <div class="badge-highlight-vertical" 
+             [ngClass]="{'profit-positive': maxUnder.profitUnder > 0, 'profit-negative': maxUnder.profitUnder < 0, 'profit-zero': maxUnder.profitUnder === 0}">
+          <mat-icon>{{ maxUnder.profitUnder > 0 ? 'arrow_upward' : maxUnder.profitUnder < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+          <p class="badge-value">${{ maxUnder.profitUnder }}</p>
         </div>
-        <ng-template #emptyHighlight5>
-          <div class="badge-highlight-empty"></div>
-        </ng-template>
       </div>
       <div class="badge-row">
         <div class="badge-vertical badge-maxover">
           <p class="badge-label">INVERSION</p>
-          <p class="badge-value">${{ maxOver.over }}</p>
+          <p class="badge-value">${{ maxOver.under }}</p>
         </div>
-        <div class="badge-highlight-vertical" *ngIf="maxOver.profitOver !== 0; else emptyHighlight6">
-          <mat-icon>arrow_upward</mat-icon>
-          <p class="badge-value">${{ maxOver.profitOver }}</p>
+        <div class="badge-highlight-vertical" 
+             [ngClass]="{'profit-positive': maxOver.profitUnder > 0, 'profit-negative': maxOver.profitUnder < 0, 'profit-zero': maxOver.profitUnder === 0}">
+          <mat-icon>{{ maxOver.profitUnder > 0 ? 'arrow_upward' : maxOver.profitUnder < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+          <p class="badge-value">${{ maxOver.profitUnder }}</p>
         </div>
-        <ng-template #emptyHighlight6>
-          <div class="badge-highlight-empty"></div>
-        </ng-template>
       </div>
     </div>
   </div>
+    </mat-tab>
+
+    <!-- TAB 2: Individual Stakes -->
+    <mat-tab label="Stakes Individuales">
+      <div class="total-stake-section">
+        <div class="total-stake-input individual-stakes">
+          <div class="stake-group-compact">
+            <span class="stake-label-compact">Casa 1 ({{ data.bookmaker_1.name }})</span>
+            <div class="input-wrapper-compact">
+              <span class="currency">$</span>
+              <input type="text" [(ngModel)]="stake1Input" (input)="calculateFromStake1()" placeholder="0.00">
+            </div>
+          </div>
+          <div class="center-controls">
+            <div class="controls-row">
+              <select [(ngModel)]="roundingStep" class="step-select-compact">
+                <option [value]="1000">$1,000</option>
+                <option [value]="2500">$2,500</option>
+                <option [value]="5000">$5,000</option>
+                <option [value]="10000">$10,000</option>
+                <option [value]="20000">$20,000</option>
+                <option [value]="50000">$50,000</option>
+                <option [value]="100000">$100,000</option>
+              </select>
+              <button class="round-btn" (click)="calculateRoundedOptimalStakes()" matTooltip="Redondear a miles">
+                <mat-icon>calculate</mat-icon>
+              </button>
+            </div>
+            <button class="reset-btn-full" (click)="resetToOriginal()" matTooltip="Resetear">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+          <div class="stake-group-compact">
+            <span class="stake-label-compact">Casa 2 ({{ data.bookmaker_2.name }})</span>
+            <div class="input-wrapper-compact">
+              <span class="currency">$</span>
+              <input type="text" [(ngModel)]="stake2Input" (input)="calculateFromStake2()" placeholder="0.00">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profit-grid-vertical">
+        <div class="profit-card-vertical left">
+          <div class="badge-row">
+            <div class="badge-highlight-vertical" 
+                 [ngClass]="{'profit-positive': winwinTab2.profitOver > 0, 'profit-negative': winwinTab2.profitOver < 0, 'profit-zero': winwinTab2.profitOver === 0}">
+              <mat-icon>{{ winwinTab2.profitOver > 0 ? 'arrow_upward' : winwinTab2.profitOver < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+              <p class="badge-value">${{ winwinTab2.profitOver }}</p>
+            </div>
+            <div class="badge-vertical badge-winwin">
+              <p class="badge-label">INVERSION</p>
+              <p class="badge-value">${{ winwinTab2.over }}</p>
+            </div>
+          </div>
+          <div class="badge-row">
+            <div class="badge-highlight-vertical" 
+                 [ngClass]="{'profit-positive': maxUnderTab2.profitOver > 0, 'profit-negative': maxUnderTab2.profitOver < 0, 'profit-zero': maxUnderTab2.profitOver === 0}">
+              <mat-icon>{{ maxUnderTab2.profitOver > 0 ? 'arrow_upward' : maxUnderTab2.profitOver < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+              <p class="badge-value">${{ maxUnderTab2.profitOver }}</p>
+            </div>
+            <div class="badge-vertical badge-maxunder">
+              <p class="badge-label">INVERSION</p>
+              <p class="badge-value">${{ maxUnderTab2.over }}</p>
+            </div>
+          </div>
+          <div class="badge-row">
+            <div class="badge-highlight-vertical" 
+                 [ngClass]="{'profit-positive': maxOverTab2.profitOver > 0, 'profit-negative': maxOverTab2.profitOver < 0, 'profit-zero': maxOverTab2.profitOver === 0}">
+              <mat-icon>{{ maxOverTab2.profitOver > 0 ? 'arrow_upward' : maxOverTab2.profitOver < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+              <p class="badge-value">${{ maxOverTab2.profitOver }}</p>
+            </div>
+            <div class="badge-vertical badge-maxover">
+              <p class="badge-label">INVERSION</p>
+              <p class="badge-value">${{ maxOverTab2.over }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="profit-card-vertical center">
+          <div class="badge-row">
+            <div class="badge-vertical badge-winwin">
+              <p class="badge-label">Win Win</p>
+              <p class="badge-value">${{ Math.min(winwinTab2.profitOver, winwinTab2.profitUnder).toFixed(1) }}</p>
+            </div>
+          </div>
+          <div class="badge-row">
+            <div class="badge-vertical badge-maxunder">
+              <p class="badge-label">Max Under</p>
+              <p class="badge-value">${{ Math.max(maxUnderTab2.profitOver, maxUnderTab2.profitUnder).toFixed(1) }}</p>
+            </div>
+          </div>
+          <div class="badge-row">
+            <div class="badge-vertical badge-maxover">
+              <p class="badge-label">Max Over</p>
+              <p class="badge-value">${{ Math.max(maxOverTab2.profitOver, maxOverTab2.profitUnder).toFixed(1) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="profit-card-vertical">
+          <div class="badge-row">
+            <div class="badge-vertical badge-winwin">
+              <p class="badge-label">INVERSION</p>
+              <p class="badge-value">${{ winwinTab2.under }}</p>
+            </div>
+            <div class="badge-highlight-vertical" 
+                 [ngClass]="{'profit-positive': winwinTab2.profitUnder > 0, 'profit-negative': winwinTab2.profitUnder < 0, 'profit-zero': winwinTab2.profitUnder === 0}">
+              <mat-icon>{{ winwinTab2.profitUnder > 0 ? 'arrow_upward' : winwinTab2.profitUnder < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+              <p class="badge-value">${{ winwinTab2.profitUnder }}</p>
+            </div>
+          </div>
+          <div class="badge-row">
+            <div class="badge-vertical badge-maxunder">
+              <p class="badge-label">INVERSION</p>
+              <p class="badge-value">${{ maxUnderTab2.under }}</p>
+            </div>
+            <div class="badge-highlight-vertical" 
+                 [ngClass]="{'profit-positive': maxUnderTab2.profitUnder > 0, 'profit-negative': maxUnderTab2.profitUnder < 0, 'profit-zero': maxUnderTab2.profitUnder === 0}">
+              <mat-icon>{{ maxUnderTab2.profitUnder > 0 ? 'arrow_upward' : maxUnderTab2.profitUnder < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+              <p class="badge-value">${{ maxUnderTab2.profitUnder }}</p>
+            </div>
+          </div>
+          <div class="badge-row">
+            <div class="badge-vertical badge-maxover">
+              <p class="badge-label">INVERSION</p>
+              <p class="badge-value">${{ maxOverTab2.under }}</p>
+            </div>
+            <div class="badge-highlight-vertical" 
+                 [ngClass]="{'profit-positive': maxOverTab2.profitUnder > 0, 'profit-negative': maxOverTab2.profitUnder < 0, 'profit-zero': maxOverTab2.profitUnder === 0}">
+              <mat-icon>{{ maxOverTab2.profitUnder > 0 ? 'arrow_upward' : maxOverTab2.profitUnder < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+              <p class="badge-value">${{ maxOverTab2.profitUnder }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 
   <div class="footer-info">
     <div class="info-item">

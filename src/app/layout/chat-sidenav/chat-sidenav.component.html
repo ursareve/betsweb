@@ -1,0 +1,110 @@
+<div class="chat-container" fxLayout="row">
+  <!-- Barra lateral colapsada con avatares -->
+  <div class="avatars-bar">
+    <div class="avatars-list">
+      <div class="avatar-item" 
+           *ngFor="let user of users$ | async"
+           [class.active]="activeChat?.uid === user.uid"
+           (click)="selectUser(user)"
+           [matTooltip]="user.firstName + ' ' + user.lastName"
+           matTooltipPosition="right">
+        <img [src]="getAvatarUrl(user)" [alt]="user.firstName">
+        <span class="online-indicator" *ngIf="user.online"></span>
+        <span class="unread-badge" *ngIf="getUnreadCount(user.uid) > 0">{{ getUnreadCount(user.uid) }}</span>
+      </div>
+    </div>
+    <div class="avatars-actions">
+      <button mat-icon-button (click)="showContacts = !showContacts">
+        <mat-icon>{{ showContacts ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sidebar de contactos (se despliega a la derecha de los avatares) -->
+  <div class="contacts-sidebar" [class.open]="showContacts">
+    <div class="sidebar-header">
+      <h3>Usuarios</h3>
+      <button mat-icon-button (click)="showContacts = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input type="text" placeholder="Buscar usuarios...">
+    </div>
+
+    <div class="contacts-list">
+      <div class="contact" 
+           *ngFor="let user of users$ | async" 
+           [class.active]="activeChat?.uid === user.uid"
+           (click)="selectUser(user)">
+        <div class="contact-avatar-wrapper">
+          <img [src]="getAvatarUrl(user)" class="contact-avatar">
+          <span class="online-indicator" *ngIf="user.online"></span>
+        </div>
+        <div class="contact-info">
+          <h4 class="contact-name">{{ user.firstName }} {{ user.lastName }}</h4>
+          <p class="contact-role">{{ user.role | titlecase }}</p>
+        </div>
+        <span class="unread-count" *ngIf="getUnreadCount(user.uid) > 0">{{ getUnreadCount(user.uid) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor principal del chat -->
+  <div class="chat-main" fxLayout="column" fxFlex>
+    <div class="chat-header" *ngIf="activeChat">
+      <img [src]="getAvatarUrl(activeChat)" class="header-avatar">
+      <div class="header-info">
+        <h3>{{ activeChat.firstName }} {{ activeChat.lastName }}</h3>
+        <span class="status" *ngIf="activeChat.online">Online</span>
+        <span class="status offline" *ngIf="!activeChat.online">Offline</span>
+      </div>
+      <span fxFlex></span>
+      <button mat-icon-button (click)="closeChat()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="!activeChat" fxLayout="column" fxLayoutAlign="center center" fxFlex>
+      <mat-icon>chat_bubble_outline</mat-icon>
+      <p>Selecciona un usuario para iniciar una conversación</p>
+    </div>
+
+    <fury-scrollbar #messagesScroll class="messages-area" fxFlex *ngIf="activeChat">
+      <div class="messages">
+        <div class="message" *ngFor="let message of messages" [class.me]="message.isMe">
+          <img [src]="message.isMe ? getCurrentUserAvatar() : getAvatarUrl(activeChat)" class="message-avatar">
+          <div class="message-bubble">
+            <p>{{ message.content }}</p>
+            <span class="message-time">{{ message.timestamp | date:'short' }}</span>
+          </div>
+        </div>
+        <div class="no-messages" *ngIf="messages.length === 0">
+          <p>No hay mensajes aún. ¡Inicia la conversación!</p>
+        </div>
+      </div>
+    </fury-scrollbar>
+
+    <div class="input-area" *ngIf="activeChat">
+      <button mat-icon-button>
+        <mat-icon>add_circle_outline</mat-icon>
+      </button>
+      <input matInput [formControl]="replyCtrl" (keyup.enter)="send()" placeholder="Escribe tu mensaje...">
+      <button mat-icon-button (click)="toggleEmojiPicker()">
+        <mat-icon>mood</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" (click)="send()" [disabled]="!replyCtrl.value">
+        <mat-icon>send</mat-icon>
+      </button>
+      
+      <!-- Emoji Picker -->
+      <div class="emoji-picker" *ngIf="showEmojiPicker">
+        <div class="emoji-grid">
+          <span class="emoji-item" *ngFor="let emoji of emojis" (click)="addEmoji(emoji)">{{ emoji }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

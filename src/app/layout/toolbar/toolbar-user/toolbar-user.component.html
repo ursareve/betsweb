@@ -1,8 +1,8 @@
 <div class="toolbar-user" (furyClickOutside)="onClickOutside()" fxFlex="grow">
     <button class="button" mat-button (click)="toggleDropdown()" [class.open]="isOpen" fxFlex="grow">
     <span fxLayout="row" fxLayoutAlign="start center">
-      <img class="avatar" src="assets/img/avatars/default.jpg">
-      <span class="name" fxHide fxShow.gt-sm>David Smith</span>
+      <img class="avatar" [src]="getAvatarUrl()">
+      <span class="name" fxHide fxShow.gt-sm>{{ currentUser?.role || 'Usuario' | titlecase }}</span>
       <mat-icon class="icon" fxHide fxShow.gt-sm>keyboard_arrow_down</mat-icon>
     </span>
   </button>
@@ -10,7 +10,7 @@
   <div class="dropdown" [class.open]="isOpen">
     <div class="content">
       <div class="list">
-        <div class="list-item" matRipple>
+        <div class="list-item" matRipple (click)="openProfile()">
           <mat-icon class="list-item-icon">account_circle</mat-icon>
           <span>Profile</span>
         </div>
@@ -23,7 +23,7 @@
           <span>Help</span>
         </div>
         <mat-divider></mat-divider>
-        <div class="list-item" matRipple [routerLink]="['/login']">
+        <div class="list-item" matRipple (click)="logout()">
           <mat-icon class="list-item-icon">exit_to_app</mat-icon>
           <span>Logout</span>
         </div>
