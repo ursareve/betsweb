@@ -544,6 +544,7 @@
 .total-stake-section {
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 16px 40px 24px;
 
   @media (max-width: 768px) {
@@ -726,6 +727,8 @@
     gap: 12px;
     padding: 8px 16px;
     align-items: flex-start;
+    justify-content: center;
+    width: 100%;
 
     @media (max-width: 768px) {
       gap: 6px;
@@ -861,7 +864,7 @@
     min-width: 140px;
 
     @media (max-width: 768px) {
-      min-width: 100px;
+      min-width: 80px;
     }
   }
 
