@@ -1132,6 +1132,10 @@
       margin-bottom: 6px;
       display: block !important;
 
+      @media (max-width: 768px) {
+        margin-bottom: 2px;
+      }
+
       &:last-child {
         margin-bottom: 0;
       }
@@ -1145,6 +1149,10 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+
+      @media (max-width: 768px) {
+        min-height: 30px;
+      }
 
       .badge-label {
         font-size: 0.7rem !important;
