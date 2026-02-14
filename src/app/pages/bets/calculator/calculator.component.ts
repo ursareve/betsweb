@@ -13,6 +13,8 @@ export class CalculatorComponent {
   stake1: string = '465.12';
   stake2: string = '537.64';
   totalStake: string = '200000';
+  stake1Input: string = '';
+  stake2Input: string = '';
   potentialWin1: string = '1000.00';
   potentialWin2: string = '1000.00';
   taxAdjusted1: string = '950.00';
@@ -23,10 +25,17 @@ export class CalculatorComponent {
   winwin = {} as any;
   maxOver = {} as any;
   maxUnder = {} as any;
+  winwinTab2 = {} as any;
+  maxOverTab2 = {} as any;
+  maxUnderTab2 = {} as any;
   originalWinwin = {} as any;
   originalMaxOver = {} as any;
   originalMaxUnder = {} as any;
+  originalWinwinTab2 = {} as any;
+  originalMaxOverTab2 = {} as any;
+  originalMaxUnderTab2 = {} as any;
   roundingStep = 2500;
+  selectedTab = 1;
 
   constructor(
     public dialogRef: MatDialogRef<CalculatorComponent>,
@@ -39,6 +48,18 @@ export class CalculatorComponent {
     this.originalWinwin = { ...this.winwin };
     this.originalMaxOver = { ...this.maxOver };
     this.originalMaxUnder = { ...this.maxUnder };
+    
+    // Inicializar stake individual solo para Tab 2
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    if (koef1 < koef2) {
+      this.stake1Input = '100000';
+      this.calculateFromStake1();
+    } else {
+      this.stake2Input = '100000';
+      this.calculateFromStake2();
+    }
   }
 
   getBookmakerIcon(bookmakerId: number): string {
@@ -242,5 +263,67 @@ export class CalculatorComponent {
 
   formatTime(timestamp: number): string {
     return moment.unix(timestamp).format('HH:mm');
+  }
+
+  calculateFromStake1(): void {
+    const stake1 = parseFloat(this.stake1Input) || 0;
+    if (stake1 === 0) {
+      this.stake2Input = '';
+      return;
+    }
+
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    // Calcular stake2 para mantener el mismo % de ganancia
+    // stake1 * koef1 = stake2 * koef2 (para Win-Win)
+    const stake2 = (stake1 * koef1) / koef2;
+    this.stake2Input = stake2.toFixed(2);
+    
+    // Recalcular escenarios con estos valores
+    const totalStake = stake1 + stake2;
+    this.recalculateScenarios(stake1, stake2, totalStake);
+  }
+
+  calculateFromStake2(): void {
+    const stake2 = parseFloat(this.stake2Input) || 0;
+    if (stake2 === 0) {
+      this.stake1Input = '';
+      return;
+    }
+
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    // Calcular stake1 para mantener el mismo % de ganancia
+    // stake1 * koef1 = stake2 * koef2 (para Win-Win)
+    const stake1 = (stake2 * koef2) / koef1;
+    this.stake1Input = stake1.toFixed(2);
+    
+    // Recalcular escenarios con estos valores
+    const totalStake = stake1 + stake2;
+    this.recalculateScenarios(stake1, stake2, totalStake);
+  }
+
+  private recalculateScenarios(stake1: number, stake2: number, totalStake: number): void {
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+
+    // Win-Win: usar los valores proporcionados
+    this.winwinTab2 = this.createBetResult('Gana Gana', stake1, stake2, totalStake);
+    
+    // Max Over: ajustar para maximizar ganancia en bookmaker_1
+    const maxOverStake2 = totalStake / koef2;
+    const maxOverStake1 = totalStake - maxOverStake2;
+    this.maxOverTab2 = this.createBetResult('Max Over', maxOverStake1, maxOverStake2, totalStake);
+    
+    // Max Under: ajustar para maximizar ganancia en bookmaker_2
+    const maxUnderStake1 = totalStake / koef1;
+    const maxUnderStake2 = totalStake - maxUnderStake1;
+    this.maxUnderTab2 = this.createBetResult('Max Under', maxUnderStake1, maxUnderStake2, totalStake);
+    
+    this.originalWinwinTab2 = { ...this.winwinTab2 };
+    this.originalMaxOverTab2 = { ...this.maxOverTab2 };
+    this.originalMaxUnderTab2 = { ...this.maxUnderTab2 };
   }
 }

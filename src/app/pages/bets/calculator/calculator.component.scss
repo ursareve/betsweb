@@ -127,7 +127,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 80px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   padding: 40px 40px 0;
   align-items: start;
   justify-items: end;
@@ -544,10 +544,10 @@
 .total-stake-section {
   display: flex;
   justify-content: center;
-  padding: 0 40px 24px;
+  padding: 16px 40px 24px;
 
   @media (max-width: 768px) {
-    padding: 0 20px 16px;
+    padding: 12px 20px 16px;
   }
 }
 
@@ -717,6 +717,213 @@
     &:hover {
       background: #1a2332;
       transform: translateY(-2px);
+    }
+  }
+
+  // Estilos específicos para Tab 2
+  &.individual-stakes {
+    flex-wrap: nowrap;
+    gap: 12px;
+    padding: 8px 16px;
+    align-items: flex-start;
+
+    @media (max-width: 768px) {
+      gap: 6px;
+      padding: 6px 8px;
+    }
+  }
+
+  .center-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+
+    .controls-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+  }
+
+  .step-select-compact {
+    background: #101622;
+    color: #c39826;
+    border: 1px solid rgba(195, 152, 38, 0.3);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+    text-align: center;
+    min-width: 80px;
+    height: 32px;
+
+    @media (max-width: 768px) {
+      font-size: 10px;
+      padding: 4px 6px;
+      min-width: 70px;
+      height: 28px;
+    }
+
+    &:hover {
+      background: #1a2332;
+      border-color: #c39826;
+    }
+
+    option {
+      background: #101622;
+      color: #c39826;
+    }
+  }
+
+  .round-btn {
+    background: #101622;
+    color: #c39826;
+    border: none;
+    border-radius: 8px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+
+    @media (max-width: 768px) {
+      min-width: 28px;
+      height: 28px;
+      padding: 4px;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &:hover {
+      background: #1a2332;
+      transform: translateY(-2px);
+    }
+  }
+
+  .reset-btn-full {
+    background: #101622;
+    color: #c39826;
+    border: none;
+    border-radius: 8px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 32px;
+
+    @media (max-width: 768px) {
+      height: 28px;
+      padding: 4px;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &:hover {
+      background: #1a2332;
+      transform: translateY(-2px);
+    }
+  }
+
+  .stake-group-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 140px;
+
+    @media (max-width: 768px) {
+      min-width: 100px;
+    }
+  }
+
+  .stake-label-compact {
+    color: rgba(16, 22, 34, 0.7);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media (max-width: 768px) {
+      font-size: 8px;
+    }
+  }
+
+  .input-wrapper-compact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 6px;
+    padding: 4px 8px;
+    height: 32px;
+
+    @media (max-width: 768px) {
+      padding: 3px 6px;
+      height: 28px;
+    }
+
+    .currency {
+      color: #101622;
+      font-size: 16px;
+      font-weight: 900;
+      margin-right: 4px;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+        margin-right: 3px;
+      }
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      color: #101622;
+      font-size: 20px;
+      font-weight: 900;
+      width: 100%;
+      outline: none;
+      padding: 0;
+      text-align: center;
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+      }
+
+      &::placeholder {
+        color: rgba(16, 22, 34, 0.4);
+      }
     }
   }
 }
@@ -1067,6 +1274,19 @@
         }
       }
 
+      &.profit-zero {
+        background: #6c757d;
+
+        mat-icon {
+          color: #fff;
+        }
+
+        .badge-value {
+          color: #fff;
+          text-shadow: none;
+        }
+      }
+
       mat-icon {
         font-size: 14px;
         width: 14px;
@@ -1155,5 +1375,41 @@
     @media (max-width: 768px) {
       max-width: 100% !important;
     }
+  }
+}
+
+::ng-deep .calculator-tabs {
+  .mat-mdc-tab-body-content {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .mat-mdc-tab-header {
+    margin-bottom: 0 !important;
+  }
+
+  .mat-mdc-tab:not(.mat-mdc-tab-disabled) {
+    .mdc-tab__text-label {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+  }
+
+  .mat-mdc-tab.mdc-tab--active {
+    .mdc-tab__text-label {
+      color: #c39826 !important;
+    }
+  }
+
+  .mat-mdc-tab-header {
+    background: rgba(26, 35, 50, 0.5) !important;
+  }
+
+  .mdc-tab-indicator__content--underline {
+    border-color: #c39826 !important;
+    border-width: 3px !important;
+  }
+
+  .mat-mdc-tab.mdc-tab--active {
+    background: rgba(195, 152, 38, 0.15) !important;
   }
 }
