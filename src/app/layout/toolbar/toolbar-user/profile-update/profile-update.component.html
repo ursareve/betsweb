@@ -1,0 +1,54 @@
+<div class="dialog-container">
+  <div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
+    <h2 class="headline m-0">Mi Perfil</h2>
+    <button class="text-secondary" mat-icon-button (click)="close()" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="-mx-6 text-border"></mat-divider>
+
+  <mat-dialog-content class="dialog-content">
+    <div fxLayout="column" fxLayoutGap="16px">
+      <div fxLayout="column" fxLayoutAlign="center center" style="margin-bottom: 16px;">
+        <div class="avatar-preview">
+          <img [src]="previewUrl || 'https://ui-avatars.com/api/?name=User&background=random'" alt="Avatar">
+        </div>
+        <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()" type="button" style="margin-top: 16px;">
+          <mat-icon>upload</mat-icon>
+          Cambiar Foto
+        </button>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="16px">
+        <mat-form-field fxFlex>
+          <mat-label>Nombre</mat-label>
+          <input matInput [value]="user.firstName" readonly>
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>Apellido</mat-label>
+          <input matInput [value]="user.lastName" readonly>
+        </mat-form-field>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="16px">
+        <mat-form-field fxFlex>
+          <mat-label>Email</mat-label>
+          <input matInput [value]="user.email" readonly>
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>Rol</mat-label>
+          <input matInput [value]="user.role" readonly>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-divider class="-mx-6 text-border"></mat-divider>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()" type="button">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="!selectedFile">Guardar</button>
+  </mat-dialog-actions>
+</div>

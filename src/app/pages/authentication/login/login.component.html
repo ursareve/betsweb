@@ -5,7 +5,7 @@
         <img src="assets/icons/icon-white.png" alt="Logo" style="width: 150px; height: auto; display: block; margin: 0 auto;">
       </div>
     </div>
-    <div class="padding" fxLayout="column" fxLayoutGap="16px" [formGroup]="form">
+    <div class="padding" fxLayout="column" fxLayoutGap="16px" [formGroup]="form" (ngSubmit)="send()">
       <div fxFlex="auto" fxLayout="column">
         <mat-form-field fxFlex="grow">
           <mat-label>E-Mail</mat-label>
@@ -14,7 +14,7 @@
         </mat-form-field>
         <mat-form-field fxFlex="grow">
           <mat-label>Password</mat-label>
-          <input matInput [type]="inputType" formControlName="password" required>
+          <input matInput [type]="inputType" formControlName="password" required (keyup.enter)="send()">
           <button type="button" mat-icon-button matSuffix (click)="toggleVisibility()" matTooltip="Toggle Visibility">
             <mat-icon *ngIf="visible">visibility</mat-icon>
             <mat-icon *ngIf="!visible">visibility_off</mat-icon>

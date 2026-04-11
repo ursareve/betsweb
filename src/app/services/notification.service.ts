@@ -25,16 +25,25 @@ export class NotificationService {
         return;
       }
 
-      console.log('2. Solicitando permiso de notificaciones...');
+      console.log('2. Estado actual de permisos:', Notification.permission);
+      
+      // Si ya fue denegado, no intentar de nuevo
+      if (Notification.permission === 'denied') {
+        console.log('⚠️ Permisos de notificación denegados previamente');
+        console.log('💡 Para habilitar: Configuración del navegador > Permisos > Notificaciones');
+        return;
+      }
+
+      console.log('3. Solicitando permiso de notificaciones...');
       const permission = await Notification.requestPermission();
-      console.log('3. Permiso:', permission);
+      console.log('4. Permiso:', permission);
       
       if (permission !== 'granted') {
         console.log('❌ Permiso denegado');
         return;
       }
 
-      console.log('4. Intentando obtener token FCM...');
+      console.log('5. Intentando obtener token FCM...');
       console.log('   - vapidKey:', environment.firebaseConfig.vapidKey.substring(0, 20) + '...');
       console.log('   - projectId:', environment.firebaseConfig.projectId);
       console.log('   - messagingSenderId:', environment.firebaseConfig.messagingSenderId);

@@ -1,0 +1,102 @@
+<fury-page-layout mode="card">
+  <fury-page-layout-header>
+    <fury-breadcrumbs [@fadeInRight] [crumbs]="['Gestión']" current="Usuarios"></fury-breadcrumbs>
+  </fury-page-layout-header>
+
+  <fury-page-layout-content [@fadeInUp]>
+    <fury-list name="Usuarios" [columns]="columns" (filterChange)="onFilterChange($event)">
+      <div class="actions">
+        <button class="refresh" (click)="loadUsers()" type="button" mat-mini-fab color="accent" matTooltip="Refrescar listado">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button class="create" (click)="createUser()" type="button" mat-mini-fab color="primary" matTooltip="Crear usuario">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <table [dataSource]="dataSource" mat-table matSort>
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="checkbox">
+          <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </th>
+          <td *matCellDef="let row" class="actions-cell" mat-cell>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- Image Column -->
+        <ng-container matColumnDef="image">
+          <th *matHeaderCellDef class="image-cell" mat-header-cell></th>
+          <td *matCellDef="let row" class="image-cell" mat-cell>
+            <img [src]="getAvatarUrl(row)" [alt]="row.firstName">
+          </td>
+        </ng-container>
+
+        <!-- Dynamic Columns -->
+        <ng-container *ngFor="let column of columns">
+          <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+            <td *matCellDef="let row" mat-cell>
+              <span *ngIf="column.property !== 'active' && column.property !== 'gender' && column.property !== 'role' && column.property !== 'activeUntil'">
+                {{ row[column.property] }}
+              </span>
+              <span *ngIf="column.property === 'active'" (click)="$event.stopPropagation()">
+                <mat-slide-toggle 
+                  [checked]="row.active" 
+                  (change)="toggleUserStatus(row, $event.checked)"
+                  [color]="row.active ? 'primary' : 'warn'">
+                </mat-slide-toggle>
+              </span>
+              <span *ngIf="column.property === 'gender'">
+                {{ row[column.property] | titlecase }}
+              </span>
+              <span *ngIf="column.property === 'role'">
+                {{ row[column.property] | titlecase }}
+              </span>
+              <span *ngIf="column.property === 'activeUntil'">
+                {{ formatDate(row.activeUntil) }}
+              </span>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+          <td *matCellDef="let row" class="actions-cell" mat-cell>
+            <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+
+            <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
+              <button (click)="updateUser(row)" mat-menu-item>
+                <span>Modificar</span>
+              </button>
+              <button (click)="resetPassword(row)" mat-menu-item>
+                <span>Restablecer Contraseña</span>
+              </button>
+              <button (click)="forceLogoutUser(row)" mat-menu-item>
+                <span>Forzar Logout</span>
+              </button>
+              <button (click)="deleteUser(row)" mat-menu-item>
+                <span>Eliminar</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+        <tr (click)="updateUser(row)"
+            *matRowDef="let row; columns: visibleColumns;"
+            class="clickable route-animations-elements"
+            mat-row></tr>
+      </table>
+
+      <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+
+    </fury-list>
+
+  </fury-page-layout-content>
+</fury-page-layout>

@@ -1,6 +1,6 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, Inject, Renderer2 } from '@angular/core';
+import { Component, Inject, Renderer2, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { SidenavService } from './layout/sidenav/sidenav.service';
 import { ThemeService } from '../@fury/services/theme.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,12 +9,20 @@ import { Platform } from '@angular/cdk/platform';
 import { SplashScreenService } from '../@fury/services/splash-screen.service';
 import { NotificationService } from './services/notification.service';
 import { AuthService } from './services/auth.service';
+import { NotificationServerService } from './core/services/notification-server.service';
+import { SweetAlertService } from './services/sweet-alert.service';
+import { Subscription } from 'rxjs';
+import { PushNotificationModalComponent } from './shared/components/push-notification-modal/push-notification-modal.component';
+import { UserService } from './core/services/user.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'betsweb-root',
   templateUrl: './app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
+  private notificationSubscription: Subscription | null = null;
+  private tokenValidationInterval: any = null;
 
   constructor(private sidenavService: SidenavService,
               private iconRegistry: MatIconRegistry,
@@ -26,7 +34,18 @@ export class AppComponent {
               private splashScreenService: SplashScreenService,
               private notificationService: NotificationService,
               private router: Router,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private notificationServer: NotificationServerService,
+              private alert: SweetAlertService,
+              private dialog: MatDialog,
+              private userService: UserService) {
+    this.authService.user$.subscribe(async (firebaseUser) => {
+      if (firebaseUser) {
+        const userDoc = await this.authService.getUserData(firebaseUser.uid);
+        const isSuperadmin = userDoc?.role === 'superadmin';
+        this.sidenavService.updateItemVisibility('/users', isSuperadmin);
+      }
+    });
     this.route.queryParamMap.pipe(
       filter(queryParamMap => queryParamMap.has('style'))
     ).subscribe(queryParamMap => this.themeService.setStyle(queryParamMap.get('style')));
@@ -50,7 +69,7 @@ export class AppComponent {
         position: 5,
         type: 'subheading',
         customClass: 'first-subheading',
-        visible: false
+        visible: true
       },
       {
         name: 'Dashboard',
@@ -101,6 +120,13 @@ export class AppComponent {
         name: 'USER INTERFACE',
         type: 'subheading',
         position: 35,
+        visible: true
+      },
+      {
+        name: 'Usuarios',
+        routeOrFunction: '/users',
+        icon: 'lock',
+        position: 36,
         visible: false
       },
       {
@@ -279,6 +305,170 @@ export class AppComponent {
       this.router.navigate(['/login']);
     }
     
-    this.notificationService.listenForegroundMessages();
+    // Detectar cierre de navegador/pestaña para hacer logout automático
+    this.setupBeforeUnloadHandler();
+    
+    // FCM deshabilitado temporalmente - Solo se usa push del servidor backend
+    // Firebase notifications (mantener para uso futuro)
+    // this.notificationService.listenForegroundMessages();
+    
+    // Conectar al servidor de notificaciones del backend (WebSocket)
+    this.authService.user$.subscribe(user => {
+      if (user) {
+        this.notificationServer.connect();
+        this.setupNotificationListener();
+        this.startTokenValidation();
+        
+        // Cargar usuarios una vez al iniciar
+        this.userService.loadUsers().subscribe();
+      } else {
+        this.notificationServer.disconnect();
+        this.stopTokenValidation();
+      }
+    });
+  }
+
+  private setupNotificationListener(): void {
+    this.notificationSubscription = this.notificationServer.notifications$.subscribe(
+      notification => {
+        console.log('Notificación recibida en app:', notification);
+        
+        // Handler para diferentes tipos de notificaciones
+        switch (notification.type) {
+          case 'general_announcement':
+            // Anuncio general para todos los usuarios
+            if (notification.data?.subject && notification.data?.content) {
+              this.dialog.open(PushNotificationModalComponent, {
+                data: {
+                  subject: notification.data.subject,
+                  content: notification.data.content,
+                  type: notification.type
+                },
+                panelClass: 'push-notification-dialog',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'push-notification-backdrop'
+              });
+            }
+            break;
+
+          case 'user_message':
+            // Mensaje específico para un usuario
+            if (notification.message || notification.data?.message) {
+              const messageData = notification.message || notification.data.message;
+              this.dialog.open(PushNotificationModalComponent, {
+                data: {
+                  subject: messageData.subject || 'Mensaje Personal',
+                  content: messageData.content || notification.message,
+                  type: notification.type
+                },
+                panelClass: 'push-notification-dialog',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'push-notification-backdrop'
+              });
+            }
+            break;
+
+          case 'success':
+            this.alert.toast('success', notification.message);
+            break;
+
+          case 'error':
+            this.alert.toast('error', notification.message);
+            break;
+
+          case 'warning':
+            this.alert.toast('warning', notification.message);
+            break;
+
+          case 'info':
+            // Modal para notificaciones informativas
+            if (notification.data?.subject && notification.data?.content) {
+              this.dialog.open(PushNotificationModalComponent, {
+                data: {
+                  subject: notification.data.subject,
+                  content: notification.data.content,
+                  type: notification.type
+                },
+                panelClass: 'push-notification-dialog',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'push-notification-backdrop'
+              });
+            } else {
+              this.alert.toast('info', notification.message);
+            }
+            break;
+
+          case 'chat_message':
+            // Los mensajes de chat se manejan en el ChatService
+            // No mostrar notificación aquí
+            break;
+
+          default:
+            // Notificación del navegador para tipos desconocidos
+            if (Notification.permission === 'granted') {
+              new Notification(notification.title, {
+                body: notification.message || JSON.stringify(notification.data),
+                icon: '/assets/icons/icon-72x72.png'
+              });
+            }
+        }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.notificationSubscription?.unsubscribe();
+    this.notificationServer.disconnect();
+    this.stopTokenValidation();
+    this.removeBeforeUnloadHandler();
+  }
+
+  private setupBeforeUnloadHandler(): void {
+    // Detectar cierre de navegador/pestaña
+    window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
+  }
+
+  private removeBeforeUnloadHandler(): void {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload.bind(this));
+  }
+
+  private handleBeforeUnload(event: BeforeUnloadEvent): void {
+    // Hacer logout síncrono al cerrar navegador
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      // Usar sendBeacon para enviar datos de forma confiable al cerrar
+      navigator.sendBeacon(
+        '/api/logout',  // Endpoint que debe manejar el decremento
+        JSON.stringify({ uid: user.uid })
+      );
+    }
+  }
+
+  private startTokenValidation(): void {
+    // Verificar token cada 15 minutos
+    this.tokenValidationInterval = setInterval(async () => {
+      try {
+        const user = this.authService.getCurrentUser();
+        if (user) {
+          // Forzar refresco del token para verificar si sigue siendo válido
+          await user.getIdToken(true);
+        }
+      } catch (error) {
+        console.log('Token inválido, cerrando sesión...');
+        await this.authService.signOut();
+        this.router.navigate(['/login']);
+        this.alert.toast('warning', 'Tu sesión ha sido cerrada');
+      }
+    }, 15 * 60 * 1000); // 15 minutos
+  }
+
+  private stopTokenValidation(): void {
+    if (this.tokenValidationInterval) {
+      clearInterval(this.tokenValidationInterval);
+      this.tokenValidationInterval = null;
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { getBookmakerIcon } from '../../../core/constants/bookmakers';
+import * as moment from 'moment';
 
 @Component({
   selector: 'fury-calculator',
@@ -8,9 +9,12 @@ import { getBookmakerIcon } from '../../../core/constants/bookmakers';
   styleUrls: ['./calculator.component.scss']
 })
 export class CalculatorComponent {
+  Math = Math;
   stake1: string = '465.12';
   stake2: string = '537.64';
   totalStake: string = '200000';
+  stake1Input: string = '';
+  stake2Input: string = '';
   potentialWin1: string = '1000.00';
   potentialWin2: string = '1000.00';
   taxAdjusted1: string = '950.00';
@@ -21,16 +25,22 @@ export class CalculatorComponent {
   winwin = {} as any;
   maxOver = {} as any;
   maxUnder = {} as any;
+  winwinTab2 = {} as any;
+  maxOverTab2 = {} as any;
+  maxUnderTab2 = {} as any;
   originalWinwin = {} as any;
   originalMaxOver = {} as any;
   originalMaxUnder = {} as any;
-  roundingStep = 10000;
+  originalWinwinTab2 = {} as any;
+  originalMaxOverTab2 = {} as any;
+  originalMaxUnderTab2 = {} as any;
+  roundingStep = 2500;
+  selectedTab = 1;
 
   constructor(
     public dialogRef: MatDialogRef<CalculatorComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.calculateOptimalStakes();
     this.baseAmount = parseFloat(this.totalStake) || 200000;
     this.winwin = this.calculateAlwaysWin(this.baseAmount);
     this.maxOver = this.calculateMaxOver(this.baseAmount);
@@ -38,7 +48,18 @@ export class CalculatorComponent {
     this.originalWinwin = { ...this.winwin };
     this.originalMaxOver = { ...this.maxOver };
     this.originalMaxUnder = { ...this.maxUnder };
-    console.log(this.winwin, this.maxOver, this.maxUnder);
+    
+    // Inicializar stake individual solo para Tab 2
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    if (koef1 < koef2) {
+      this.stake1Input = '100000';
+      this.calculateFromStake1();
+    } else {
+      this.stake2Input = '100000';
+      this.calculateFromStake2();
+    }
   }
 
   getBookmakerIcon(bookmakerId: number): string {
@@ -46,53 +67,76 @@ export class CalculatorComponent {
   }
 
   calculateAlwaysWin(baseAmount: number): any {
-    const totalValue = this.data.over.koef + this.data.under.koef;
-    if (totalValue === 0) return null;
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    // Fórmula correcta de surebet: distribuir inversamente proporcional a las cuotas
+    const impliedProb1 = 1 / koef1;
+    const impliedProb2 = 1 / koef2;
+    const totalImplied = impliedProb1 + impliedProb2;
+    
+    if (totalImplied === 0) return null;
 
-    let over = (baseAmount * this.data.under.koef) / totalValue;
-    let under = baseAmount - over;
+    let stake1 = (baseAmount * impliedProb1) / totalImplied;
+    let stake2 = (baseAmount * impliedProb2) / totalImplied;
 
-    over = Math.round(over);
-    under = baseAmount - over;
+    stake1 = Math.round(stake1);
+    stake2 = baseAmount - stake1;
 
-    return this.createBetResult('Gana Gana', over, under, baseAmount);
+    return this.createBetResult('Gana Gana', stake1, stake2, baseAmount);
   }
 
   calculateMaxOver(baseAmount: number): any {
-    if (this.data.under.koef === 0) return null;
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    if (koef2 === 0) return null;
 
-    let under = baseAmount / this.data.under.koef;
-    let over = baseAmount - under;
+    // Max Over: maximizar ganancia si gana bookmaker_1
+    // stake2 = baseAmount / koef2 (para recuperar inversión si gana bookmaker_2)
+    let stake2 = baseAmount / koef2;
+    let stake1 = baseAmount - stake2;
 
-    return this.createBetResult('Max Over', over, under, baseAmount);
+    stake2 = Math.round(stake2);
+    stake1 = baseAmount - stake2;
+
+    return this.createBetResult('Max Over', stake1, stake2, baseAmount);
   }
 
   calculateMaxUnder(baseAmount: number): any {
-    if (this.data.over.koef === 0) return null;
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    if (koef1 === 0) return null;
 
-    let over = baseAmount / this.data.over.koef;
-    let under = baseAmount - over;
+    // Max Under: maximizar ganancia si gana bookmaker_2
+    // stake1 = baseAmount / koef1 (para recuperar inversión si gana bookmaker_1)
+    let stake1 = baseAmount / koef1;
+    let stake2 = baseAmount - stake1;
 
-    return this.createBetResult('Max Under', over, under, baseAmount);
+    stake1 = Math.round(stake1);
+    stake2 = baseAmount - stake1;
+
+    return this.createBetResult('Max Under', stake1, stake2, baseAmount);
   }
 
-  createBetResult(name: string, over: number, under: number, baseAmount: number): any {
-    const winOver = parseFloat((over * this.data.over.koef).toFixed(1));
-    const winUnder = parseFloat((under * this.data.under.koef).toFixed(1));
-    const profitOver = parseFloat((winOver - baseAmount).toFixed(1));
-    const profitUnder = parseFloat((winUnder - baseAmount).toFixed(1));
-
-    over = Math.round(over);
-    under = baseAmount - over;
+  createBetResult(name: string, stake1: number, stake2: number, baseAmount: number): any {
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    const winStake1 = parseFloat((stake1 * koef1).toFixed(1));
+    const winStake2 = parseFloat((stake2 * koef2).toFixed(1));
+    const profitStake1 = parseFloat((winStake1 - baseAmount).toFixed(1));
+    const profitStake2 = parseFloat((winStake2 - baseAmount).toFixed(1));
 
     return {
       name,
-      over,
-      under,
-      winOver,
-      winUnder,
-      profitOver,
-      profitUnder
+      over: Math.round(stake1),
+      under: Math.round(stake2),
+      winOver: winStake1,
+      winUnder: winStake2,
+      profitOver: profitStake1,
+      profitUnder: profitStake2
     };
   }
 
@@ -107,6 +151,14 @@ export class CalculatorComponent {
     this.stake1 = stake1.toFixed(2);
     this.stake2 = stake2.toFixed(2);
     this.calculate();
+    
+    // Recalcular los valores de las tarjetas
+    this.winwin = this.calculateAlwaysWin(total);
+    this.maxOver = this.calculateMaxOver(total);
+    this.maxUnder = this.calculateMaxUnder(total);
+    this.originalWinwin = { ...this.winwin };
+    this.originalMaxOver = { ...this.maxOver };
+    this.originalMaxUnder = { ...this.maxUnder };
   }
 
   calculate(): void {
@@ -144,47 +196,134 @@ export class CalculatorComponent {
 
   calculateRoundedOptimalStakes(): void {
     const baseAmount = parseFloat(this.totalStake) || 200000;
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
 
-    // Win-Win: Aproximar para maximizar ganancia
-    const winwinOriginal = this.calculateAlwaysWin(baseAmount);
-    let winwinOver = this.roundToNearestThousand(winwinOriginal.over);
-    let winwinUnder = baseAmount - winwinOver;
-    
-    // Verificar si ajustando over hacia arriba mejora la ganancia mínima
-    const profitOverUp = (winwinOver * this.data.over.koef) - baseAmount;
-    const profitUnderUp = (winwinUnder * this.data.under.koef) - baseAmount;
-    const minProfitUp = Math.min(profitOverUp, profitUnderUp);
-    
-    // Probar ajustando hacia abajo
-    const winwinOverDown = winwinOver - this.roundingStep;
-    const winwinUnderDown = baseAmount - winwinOverDown;
-    const profitOverDown = (winwinOverDown * this.data.over.koef) - baseAmount;
-    const profitUnderDown = (winwinUnderDown * this.data.under.koef) - baseAmount;
-    const minProfitDown = Math.min(profitOverDown, profitUnderDown);
-    
-    if (minProfitDown > minProfitUp) {
-      winwinOver = winwinOverDown;
-      winwinUnder = winwinUnderDown;
+    this.winwin = this.findBestRounding(this.calculateAlwaysWin(baseAmount).over, baseAmount, koef1, koef2, 'min', 'Gana Gana');
+    this.maxOver = this.findBestRounding(this.calculateMaxOver(baseAmount).under, baseAmount, koef1, koef2, 'profit1', 'Max Over', true);
+    this.maxUnder = this.findBestRounding(this.calculateMaxUnder(baseAmount).over, baseAmount, koef1, koef2, 'profit2', 'Max Under');
+  }
+
+  private findBestRounding(optimal: number, baseAmount: number, koef1: number, koef2: number, mode: 'min' | 'profit1' | 'profit2', name: string, isStake2 = false): any {
+    const candidates = [Math.floor, Math.ceil, Math.round].map(fn => fn(optimal / this.roundingStep) * this.roundingStep);
+    let best = optimal;
+    let bestValue = -Infinity;
+
+    for (const candidate of candidates) {
+      if (candidate <= 0 || candidate >= baseAmount) continue;
+      
+      const [stake1, stake2] = isStake2 ? [baseAmount - candidate, candidate] : [candidate, baseAmount - candidate];
+      const [profit1, profit2] = [(stake1 * koef1) - baseAmount, (stake2 * koef2) - baseAmount];
+      
+      const value = mode === 'min' ? Math.min(profit1, profit2) : mode === 'profit1' ? profit1 : profit2;
+      
+      if ((mode === 'min' || (profit1 >= 0 && profit2 >= 0)) && value > bestValue) {
+        bestValue = value;
+        best = candidate;
+      }
     }
-    
-    this.winwin = this.createBetResult('Gana Gana', winwinOver, winwinUnder, baseAmount);
 
-    // Max Over: Aproximar conservando la lógica
-    const maxOverOriginal = this.calculateMaxOver(baseAmount);
-    let maxOverUnder = this.roundToNearestThousand(maxOverOriginal.under);
-    let maxOverOver = baseAmount - maxOverUnder;
-    this.maxOver = this.createBetResult('Max Over', maxOverOver, maxOverUnder, baseAmount);
+    if (bestValue === -Infinity) {
+      for (const candidate of candidates) {
+        if (candidate <= 0 || candidate >= baseAmount) continue;
+        const [stake1, stake2] = isStake2 ? [baseAmount - candidate, candidate] : [candidate, baseAmount - candidate];
+        const minProfit = Math.min((stake1 * koef1) - baseAmount, (stake2 * koef2) - baseAmount);
+        if (minProfit > bestValue) {
+          bestValue = minProfit;
+          best = candidate;
+        }
+      }
+    }
 
-    // Max Under: Aproximar conservando la lógica
-    const maxUnderOriginal = this.calculateMaxUnder(baseAmount);
-    let maxUnderOver = this.roundToNearestThousand(maxUnderOriginal.over);
-    let maxUnderUnder = baseAmount - maxUnderOver;
-    this.maxUnder = this.createBetResult('Max Under', maxUnderOver, maxUnderUnder, baseAmount);
+    const [finalStake1, finalStake2] = isStake2 ? [baseAmount - best, best] : [best, baseAmount - best];
+    return this.createBetResult(name, finalStake1, finalStake2, baseAmount);
   }
 
   resetToOriginal(): void {
     this.winwin = { ...this.originalWinwin };
     this.maxOver = { ...this.originalMaxOver };
     this.maxUnder = { ...this.originalMaxUnder };
+  }
+
+  goToBookmaker1(): void {
+    if (this.data.bookmaker_1?.link) {
+      window.open(this.data.bookmaker_1.link, '_blank');
+    }
+  }
+
+  goToBookmaker2(): void {
+    if (this.data.bookmaker_2?.link) {
+      window.open(this.data.bookmaker_2.link, '_blank');
+    }
+  }
+
+  formatDate(timestamp: number): string {
+    return moment.unix(timestamp).format('DD/MM/YYYY');
+  }
+
+  formatTime(timestamp: number): string {
+    return moment.unix(timestamp).format('HH:mm');
+  }
+
+  calculateFromStake1(): void {
+    const stake1 = parseFloat(this.stake1Input) || 0;
+    if (stake1 === 0) {
+      this.stake2Input = '';
+      return;
+    }
+
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    // Calcular stake2 para mantener el mismo % de ganancia
+    // stake1 * koef1 = stake2 * koef2 (para Win-Win)
+    const stake2 = (stake1 * koef1) / koef2;
+    this.stake2Input = stake2.toFixed(2);
+    
+    // Recalcular escenarios con estos valores
+    const totalStake = stake1 + stake2;
+    this.recalculateScenarios(stake1, stake2, totalStake);
+  }
+
+  calculateFromStake2(): void {
+    const stake2 = parseFloat(this.stake2Input) || 0;
+    if (stake2 === 0) {
+      this.stake1Input = '';
+      return;
+    }
+
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+    
+    // Calcular stake1 para mantener el mismo % de ganancia
+    // stake1 * koef1 = stake2 * koef2 (para Win-Win)
+    const stake1 = (stake2 * koef2) / koef1;
+    this.stake1Input = stake1.toFixed(2);
+    
+    // Recalcular escenarios con estos valores
+    const totalStake = stake1 + stake2;
+    this.recalculateScenarios(stake1, stake2, totalStake);
+  }
+
+  private recalculateScenarios(stake1: number, stake2: number, totalStake: number): void {
+    const koef1 = this.data.bookmaker_1.koef;
+    const koef2 = this.data.bookmaker_2.koef;
+
+    // Win-Win: usar los valores proporcionados
+    this.winwinTab2 = this.createBetResult('Gana Gana', stake1, stake2, totalStake);
+    
+    // Max Over: ajustar para maximizar ganancia en bookmaker_1
+    const maxOverStake2 = totalStake / koef2;
+    const maxOverStake1 = totalStake - maxOverStake2;
+    this.maxOverTab2 = this.createBetResult('Max Over', maxOverStake1, maxOverStake2, totalStake);
+    
+    // Max Under: ajustar para maximizar ganancia en bookmaker_2
+    const maxUnderStake1 = totalStake / koef1;
+    const maxUnderStake2 = totalStake - maxUnderStake1;
+    this.maxUnderTab2 = this.createBetResult('Max Under', maxUnderStake1, maxUnderStake2, totalStake);
+    
+    this.originalWinwinTab2 = { ...this.winwinTab2 };
+    this.originalMaxOverTab2 = { ...this.maxOverTab2 };
+    this.originalMaxUnderTab2 = { ...this.maxUnderTab2 };
   }
 }

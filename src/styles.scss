@@ -1,3 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "./@fury/styles/core";
 @import "./app/app.theme";
+
+/* Push Notification Modal Styles */
+.push-notification-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+}
+
+.push-notification-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
